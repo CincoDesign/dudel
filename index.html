@@ -2,6 +2,7 @@
 <style media="screen">
   body {
     font-family: monospace;
+    margin: 0;
   }
 
   #gamepadDisplay {
@@ -9,10 +10,16 @@
     top: 0;
     right: 0;
     width: 20%;
+    background: rgba(0,0,0,0.2);
+    color: white;
+    padding: 20px;
+    z-index: 100;
   }
 
   #game {
+    background: black;
     border: 1px solid gray;
+    position: absolute;
   }
 </style>
 
@@ -24,7 +31,7 @@
     <div id="gamepadDisplay">No Gamepad Connected!</div>
 
 
-    <canvas id="game" width="600" height="540"></canvas>
+    <canvas id="game"></canvas>
 
     <script src="bundle.js"></script>
     <script src="ui.js"></script>

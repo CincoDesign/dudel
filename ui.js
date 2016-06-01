@@ -13,6 +13,16 @@ console.log(xbox);
 var canvas = document.getElementById('game'),
     ctx = canvas.getContext('2d');
 
+    // resize the canvas to fill browser window dynamically
+window.addEventListener('resize', resizeCanvas, false);
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+
 var XBOX_Buttons = [];
 var XBOX_Axes = [];
 
@@ -81,14 +91,14 @@ var Player = {
   right: false,
   A: false,
   B: false,
-  speed: 2,
-  color: 128,
+  speed: 10,
+  color: 0,
   render: function() {
     this.updatePosition();
     ctx.rect(this.x, this.y, this.size, this.size);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, 3*Math.PI);
-    ctx.fillStyle = colorPhase(Math.abs((this.size / 15)));
+    ctx.fillStyle = colorPhase(this.color / 15);
     ctx.fill();
   },
 
@@ -103,7 +113,7 @@ var Player = {
     }
     else { this.size = 2; }
 
-    this.X ? this.color = colorPhase(Math.abs((this.size / 15))) : false;
+    this.X ? this.color = colorPhase(this.color / 15) : false;
   }
 };
 
@@ -117,6 +127,8 @@ function renderGame() {
 
 ;(function animloop(){
   window.requestAnimationFrame(animloop, 1000 / 60);
+
+  player1.color++;
 
 
   for (var i = 0; i < buttons.length; i++) {

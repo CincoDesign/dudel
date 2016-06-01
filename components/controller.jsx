@@ -10,7 +10,7 @@ var Buttons = React.createClass({
 
     for (var i = 0; i < xbox.buttons.length; i++) {
 
-      buttonText = "Button " + i + ": ";
+      buttonText = "btn " + i + ": ";
 
       var disp = buttonText;
 
@@ -50,7 +50,7 @@ var Sticks = React.createClass({
 
    for (var i = 0; i < axis.length; i++) {
 
-     stickText = "Stick " + i + ": " + axis[i];
+     stickText = "axis " + i + ": " + axis[i];
 
      var disp = stickText;
 

@@ -57,24 +57,24 @@ var Sticks = React.createClass({
      stickArray.push(disp);
    }
 
-   if (L_STICK_X > 0.25) {right = true;}
-   else right = false;
-   if (L_STICK_X < -0.25) { left = true;}
-   else left = false;
-   if (L_STICK_Y > 0.25) { down = true;}
-   else down = false;
-   if (L_STICK_Y < -0.25) {   up = true;}
-   else up = false;
-
-    if (right && !up && !down) console.log('E');
-    if (left && !up && !down) console.log('W');
-    if (down && !left && !right) console.log('S');
-    if (up && !left && !right) console.log('N');
-
-    if (up && right) console.log('NE');
-    if (up && left) console.log('NW');
-    if (down && left) console.log('SW');
-    if (down && right) console.log('SE');
+  //  if (L_STICK_X > 0.25) {right = true;}
+  //  else right = false;
+  //  if (L_STICK_X < -0.25) { left = true;}
+  //  else left = false;
+  //  if (L_STICK_Y > 0.25) { down = true;}
+  //  else down = false;
+  //  if (L_STICK_Y < -0.25) {   up = true;}
+  //  else up = false;
+   //
+  //   if (right && !up && !down) console.log('E');
+  //   if (left && !up && !down) console.log('W');
+  //   if (down && !left && !right) console.log('S');
+  //   if (up && !left && !right) console.log('N');
+   //
+  //   if (up && right) console.log('NE');
+  //   if (up && left) console.log('NW');
+  //   if (down && left) console.log('SW');
+  //   if (down && right) console.log('SE');
 
    return (
      <ul>

@@ -10,7 +10,10 @@ export default React.createClass({
     }
 
     if (gamepadSupported()) {
-      prompt = "To begin using your gamepad, connect it and press any button!";
+      var controller = navigator.getGamepads()[0];
+
+      if (controller.connected) prompt = "";
+      else prompt = "To begin using your gamepad, connect it and press any button!";
     }
 
     else {

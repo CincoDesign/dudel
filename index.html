@@ -1,8 +1,16 @@
 <html>
 <style media="screen">
+  body, html {
+    -webkit-overflow-scrolling: none;
+    overflow: hidden;
+  }
+
   body {
+    background: black;
     font-family: monospace;
     margin: 0;
+    overflow: hidden;
+    color: white;
   }
 
   #gamepadDisplay {
@@ -18,8 +26,8 @@
 
   #game {
     background: black;
-    border: 1px solid gray;
     position: absolute;
+    display: block;
   }
 </style>
 
@@ -28,7 +36,7 @@
     <div id="intro"></div>
 
     <div id="gamepadPrompt"></div>
-    <div id="gamepadDisplay">No Gamepad Connected!</div>
+    <div id="gamepadDisplay">No Gamepad Connected! Connect a controller and refresh the page.</div>
 
 
     <canvas id="game"></canvas>

@@ -9,7 +9,7 @@ var checkForPad = document.createEvent('HTMLEvents');
 checkForPad.initEvent('gamepadconnected', true, false);
 
 var checkGP = window.setInterval(function() {
-  console.log('checkGP');
+  // console.log('checkGP');
   if (navigator.getGamepads()[0]) {
     if (!hasGamepad)
       window.dispatchEvent(checkForPad);
@@ -18,10 +18,10 @@ var checkGP = window.setInterval(function() {
 }, 1);
 
 
-ReactDOM.render(
-  <Prompt />,
-  document.getElementById('gamepadPrompt')
-);
+// ReactDOM.render(
+//   <Prompt />,
+//   document.getElementById('gamepadPrompt')
+// );
 
 
 // Listen for gamepad

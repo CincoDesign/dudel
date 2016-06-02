@@ -3,8 +3,41 @@
 (function() {
   'use strict';
 
-  var xbox = navigator.getGamepads()[0];
-  var buttons = xbox.buttons;
+  document.body.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+  });
+
+  var xbox;
+  var buttons;
+  var XBOX_Buttons;
+
+  window.addEventListener("gamepadconnected", function() {
+
+    xbox = navigator.getGamepads()[0];
+    buttons = xbox.buttons;
+
+    XBOX_Buttons = [];
+
+    XBOX_Buttons[0] = 'A';
+    XBOX_Buttons[1] = 'B';
+    XBOX_Buttons[2] = 'X';
+    XBOX_Buttons[3] = 'Y';
+    XBOX_Buttons[4] = 'LB';
+    XBOX_Buttons[5] = 'RB';
+    XBOX_Buttons[6] = 'LT';
+    XBOX_Buttons[7] = 'RT';
+    XBOX_Buttons[8] = 'SEL';
+    XBOX_Buttons[9] = 'STR';
+    XBOX_Buttons[10] = 'L3';
+    XBOX_Buttons[11] = 'R3';
+    XBOX_Buttons[12] = 'up';
+    XBOX_Buttons[13] = 'down';
+    XBOX_Buttons[14] = 'left';
+    XBOX_Buttons[15] = 'right';
+    XBOX_Buttons[16] = 'sync';
+  });
+
+
   var canvas = document.getElementById('game');
   var ctx = canvas.getContext('2d');
 
@@ -29,25 +62,16 @@
 
   resizeCanvas();
 
-  var XBOX_Buttons = [];
+  // Mouse shit
+  function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  }
 
-  XBOX_Buttons[0] = 'A',
-    XBOX_Buttons[1] = 'B',
-    XBOX_Buttons[2] = 'X',
-    XBOX_Buttons[3] = 'Y',
-    XBOX_Buttons[4] = 'LB',
-    XBOX_Buttons[5] = 'RB',
-    XBOX_Buttons[6] = 'LT',
-    XBOX_Buttons[7] = 'RT',
-    XBOX_Buttons[8] = 'SEL',
-    XBOX_Buttons[9] = 'STR',
-    XBOX_Buttons[10] = 'L3',
-    XBOX_Buttons[11] = 'R3',
-    XBOX_Buttons[12] = 'up',
-    XBOX_Buttons[13] = 'down',
-    XBOX_Buttons[14] = 'left',
-    XBOX_Buttons[15] = 'right',
-    XBOX_Buttons[16] = 'sync';
+
 
   function colorPhase(phase, x, y, z) {
     var color, red, green, blue, center, width, frequency;
@@ -78,7 +102,7 @@
       b: 4,
       height: 5,
       width: 5,
-      size: 50,
+      size: 100,
       up: false,
       down: false,
       left: false,
@@ -95,6 +119,7 @@
       color: 0,
       AxisX: 0,
       AxisY: 1,
+
       render: function() {
         this.updatePosition();
         // ctx.rect(this.x, this.y, this.size, this.size);
@@ -105,12 +130,12 @@
       },
 
       updatePosition: function() {
-
-        this.up ? this.y = this.y + xbox.axes[this.AxisY] * this.speed : false;
-        this.down ? this.y = this.y + xbox.axes[this.AxisY] * this.speed : false;
-        this.left ? this.x = this.x + xbox.axes[this.AxisX] * this.speed : false;
-        this.right ? this.x = this.x + xbox.axes[this.AxisX] * this.speed : false;
-
+        if (xbox !== undefined) {
+          this.up ? this.y = this.y + xbox.axes[this.AxisY] * this.speed : false;
+          this.down ? this.y = this.y + xbox.axes[this.AxisY] * this.speed : false;
+          this.left ? this.x = this.x + xbox.axes[this.AxisX] * this.speed : false;
+          this.right ? this.x = this.x + xbox.axes[this.AxisX] * this.speed : false;
+        }
 
         if (this.LB) this.speed = 2.5;
         else if (this.RB) this.speed = 10;
@@ -147,11 +172,36 @@
   p2.AxisY = 3;
   p2.AxisX = 2;
 
+  var players = [p1];
+
   function renderGame() {
-    // ctx.drawImage(space,0,0);
-    p1.render();
-    p2.render();
+    players.forEach(function(p) {
+      p.render();
+    });
   }
+
+  function wiredup() {
+    canvas.addEventListener('touchmove', function(evt) {
+      var mousePos = getMousePos(canvas, evt);
+      var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+      var force = evt.targetTouches[0].force;
+
+      console.log(evt.targetTouches[0].force);
+
+      p1.x = evt.targetTouches[0].pageX;
+      p1.y = evt.targetTouches[0].pageY;
+      p1.color++;
+      p1.size = force * 100;
+      console.log(p1.size)
+    }, false);
+
+    // canvas.addEventListener('scroll', function(evt) {
+    //   p1.size++;
+    // }, false);
+  }
+
+
+  window.addEventListener('load', wiredup, false);
 
   (function animloop() {
     window.requestAnimationFrame(animloop, 1000 / 60);
@@ -168,22 +218,23 @@
       }
     }
 
+    if (xbox !== undefined) {
 
-    for (var i = 0; i < buttons.length; i++) {
+      for (var i = 0; i < buttons.length; i++) {
 
-      xbox.axes[p1.AxisY] < 0 ? p1.up = true : p1.up = false;
-      xbox.axes[p1.AxisY] > 0 ? p1.down = true : p1.down = false;
-      xbox.axes[p1.AxisX] > 0 ? p1.right = true : p1.right = false;
-      xbox.axes[p1.AxisX] < 0 ? p1.left = true : p1.left = false;
+        xbox.axes[p1.AxisY] < 0 ? p1.up = true : p1.up = false;
+        xbox.axes[p1.AxisY] > 0 ? p1.down = true : p1.down = false;
+        xbox.axes[p1.AxisX] > 0 ? p1.right = true : p1.right = false;
+        xbox.axes[p1.AxisX] < 0 ? p1.left = true : p1.left = false;
 
-      xbox.axes[p2.AxisY] < 0 ? p2.up = true : p2.up = false;
-      xbox.axes[p2.AxisY] > 0 ? p2.down = true : p2.down = false;
-      xbox.axes[p2.AxisX] > 0 ? p2.right = true : p2.right = false;
-      xbox.axes[p2.AxisX] < 0 ? p2.left = true : p2.left = false;
+        xbox.axes[p2.AxisY] < 0 ? p2.up = true : p2.up = false;
+        xbox.axes[p2.AxisY] > 0 ? p2.down = true : p2.down = false;
+        xbox.axes[p2.AxisX] > 0 ? p2.right = true : p2.right = false;
+        xbox.axes[p2.AxisX] < 0 ? p2.left = true : p2.left = false;
 
-      buttons[i].pressed ? p1[XBOX_Buttons[i]] = true : p1[XBOX_Buttons[i]] = false;
-      buttons[i].pressed ? p2[XBOX_Buttons[i]] = true : p2[XBOX_Buttons[i]] = false;
-
+        buttons[i].pressed ? p1[XBOX_Buttons[i]] = true : p1[XBOX_Buttons[i]] = false;
+        buttons[i].pressed ? p2[XBOX_Buttons[i]] = true : p2[XBOX_Buttons[i]] = false;
+      }
     }
 
     renderGame();

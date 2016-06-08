@@ -1,9 +1,9 @@
-/*jshint -W030 */
+/* jshint -W030 */
 
 (function() {
   'use strict';
 
-  document.body.addEventListener('touchmove', function(e) {
+  document.body.addEventListener('touchmove', function (e) {
     e.preventDefault();
   });
 
@@ -70,7 +70,6 @@
       y: evt.clientY - rect.top
     };
   }
-
 
 
   function colorPhase(phase, x, y, z) {

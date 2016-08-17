@@ -1,43 +1,45 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Prompt from './components/prompt';
+import React from 'react';
+import ReactDOM from 'react-dom';
+// import Prompt from './components/prompt';
 import Display from './components/controller';
+import Canvas from './components/canvas';
 
-var hasGamepad = false;
+let hasGamepad = false;
 
-var checkForPad = document.createEvent('HTMLEvents');
+const checkForPad = document.createEvent('HTMLEvents');
 checkForPad.initEvent('gamepadconnected', true, false);
 
-var checkGP = window.setInterval(function() {
-  // console.log('checkGP');
+const checkInterval = window.setInterval(() => {
+  // console.log('checkInterval');
   if (navigator.getGamepads()[0]) {
-    if (!hasGamepad)
+    if (!hasGamepad) {
       window.dispatchEvent(checkForPad);
-    window.clearInterval(checkGP);
+      window.clearInterval(checkInterval);
+    }
   }
 }, 1);
-
 
 // ReactDOM.render(
 //   <Prompt />,
 //   document.getElementById('gamepadPrompt')
 // );
 
+// Render to Canvas
+ReactDOM.render(
+  <Canvas />, document.getElementById('gameCanvas'));
 
 // Listen for gamepad
-var gamepadListener = function() {
+const gamepadListener = () => {
   ReactDOM.render(
-    <Display />,
-    document.getElementById('gamepadDisplay')
-  );
+    <Display />, document.getElementById('gamepadDisplay'));
 };
 
-window.addEventListener("gamepadconnected", function() {
+window.addEventListener('gamepadconnected', () => {
   hasGamepad = true;
+
   window.setInterval(gamepadListener, 1);
 
-  window.addEventListener("gamepaddisconnected", function() {
+  window.addEventListener('gamepaddisconnected', () => {
     window.clearInterval(gamepadListener);
   });
-
 });

@@ -1,5 +1,8 @@
-<html>
-<style media="screen">
+<!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dudel</title>
+
+<style>
   body, html {
     -webkit-overflow-scrolling: none;
     overflow: hidden;
@@ -11,6 +14,11 @@
     margin: 0;
     overflow: hidden;
     color: white;
+  }
+
+  #gamepadPrompt {
+    position: absolute;
+    padding: 20px;
   }
 
   #gamepadDisplay {
@@ -31,19 +39,11 @@
   }
 </style>
 
+<body>
+  <div id="gamepadPrompt"></div>
+  <div id="gamepadDisplay"></div>
+  <div id="gameCanvas"></div>
 
-  <body>
-    <div id="intro"></div>
+  <script src="bundle.js"></script>
 
-    <div id="gamepadPrompt"></div>
-    <div id="gamepadDisplay">No Gamepad Connected! Connect a controller and refresh the page.</div>
-
-
-    <canvas id="game"></canvas>
-
-    <script src="bundle.js"></script>
-    <script src="ui.js"></script>
-
-
-  </body>
-</html>
+</body>

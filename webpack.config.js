@@ -1,7 +1,11 @@
+const Dashboard = require('webpack-dashboard');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+const dashboard = new Dashboard();
+
 module.exports = {
-  entry: "./app.jsx",
+  entry: './app.jsx',
   output: {
-    filename: "bundle.js"
+    filename: 'bundle.js',
   },
   watch: true,
   module: {
@@ -10,11 +14,14 @@ module.exports = {
       exclude: /node_modules/,
       loader: 'babel-loader',
       query: {
-        presets: ['react', 'es2015']
-      }
-    }]
+        presets: ['react', 'es2015'],
+      },
+    }],
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
   },
+  plugins: [
+    new DashboardPlugin(dashboard.setData),
+  ],
 };

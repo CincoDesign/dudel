@@ -7,9 +7,9 @@ class Canvas extends React.Component {
   }
 
   updateCanvas() {
+    let xbox = undefined;
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    const xbox = navigator.getGamepads()[0];
     const buttonList = [
       'A',
       'B',
@@ -29,6 +29,14 @@ class Canvas extends React.Component {
       'right',
       'sync',
     ];
+
+    window.addEventListener('gamepadconnected', () => {
+      xbox = navigator.getGamepads()[0];
+    });
+
+    document.body.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    });
 
     // resize the canvas to fill browser window dynamically
     function resizeCanvas() {
@@ -61,7 +69,6 @@ class Canvas extends React.Component {
     // }
 
     function colorPhase(phase, x, y, z) {
-      let i;
       let color;
       let red;
       let green;
@@ -75,7 +82,7 @@ class Canvas extends React.Component {
       const width = 127;
       const frequency = Math.PI * 2 / 10;
 
-      for (i = 0; i < 100; ++i) {
+      for (let i = 0; i < 100; ++i) {
         red = Math.sin(frequency * i + x + phase) * width + center;
         green = Math.sin(frequency * i + y + phase) * width + center;
         blue = Math.sin(frequency * i + z + phase) * width + center;

@@ -9,15 +9,15 @@ let hasGamepad = false;
 const checkForPad = document.createEvent('HTMLEvents');
 checkForPad.initEvent('gamepadconnected', true, false);
 
-const checkInterval = window.setInterval(() => {
-  // console.log('checkInterval');
-  if (navigator.getGamepads()[0]) {
-    if (!hasGamepad) {
-      window.dispatchEvent(checkForPad);
-      window.clearInterval(checkInterval);
-    }
-  }
-}, 1);
+// const checkInterval = window.setInterval(() => {
+//   // console.log('checkInterval');
+//   if (navigator.getGamepads !== undefined) {
+//     if (!hasGamepad) {
+//       window.dispatchEvent(checkForPad);
+//       window.clearInterval(checkInterval);
+//     }
+//   }
+// }, 1);
 
 // ReactDOM.render(
 //   <Prompt />,

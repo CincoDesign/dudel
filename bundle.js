@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	var _react = __webpack_require__(1);
 
@@ -54,41 +54,53 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _prompt = __webpack_require__(168);
-
-	var _prompt2 = _interopRequireDefault(_prompt);
-
-	var _controller = __webpack_require__(169);
+	var _controller = __webpack_require__(168);
 
 	var _controller2 = _interopRequireDefault(_controller);
 
+	var _canvas = __webpack_require__(169);
+
+	var _canvas2 = _interopRequireDefault(_canvas);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// import Prompt from './components/prompt';
+
 
 	var hasGamepad = false;
 
 	var checkForPad = document.createEvent('HTMLEvents');
 	checkForPad.initEvent('gamepadconnected', true, false);
 
-	var checkGP = window.setInterval(function () {
-	  console.log('checkGP');
-	  if (navigator.getGamepads()[0]) {
-	    if (!hasGamepad) window.dispatchEvent(checkForPad);
-	    window.clearInterval(checkGP);
-	  }
-	}, 1);
+	// const checkInterval = window.setInterval(() => {
+	//   // console.log('checkInterval');
+	//   if (navigator.getGamepads !== undefined) {
+	//     if (!hasGamepad) {
+	//       window.dispatchEvent(checkForPad);
+	//       window.clearInterval(checkInterval);
+	//     }
+	//   }
+	// }, 1);
 
-	_reactDom2.default.render(_react2.default.createElement(_prompt2.default, null), document.getElementById('gamepadPrompt'));
+	// ReactDOM.render(
+	//   <Prompt />,
+	//   document.getElementById('gamepadPrompt')
+	// );
+
+	// Render to Canvas
+	_reactDom2.default.render(_react2.default.createElement(_canvas2.default, null), document.getElementById('gameCanvas'));
 
 	// Listen for gamepad
 	var gamepadListener = function gamepadListener() {
 	  _reactDom2.default.render(_react2.default.createElement(_controller2.default, null), document.getElementById('gamepadDisplay'));
 	};
 
-	window.addEventListener("gamepadconnected", function () {
+	window.addEventListener('gamepadconnected', function () {
 	  hasGamepad = true;
+
 	  window.setInterval(gamepadListener, 1);
 
-	  window.addEventListener("gamepaddisconnected", function () {
+	  window.addEventListener('gamepaddisconnected', function () {
 	    window.clearInterval(gamepadListener);
 	  });
 	});
@@ -20188,11 +20200,7 @@
 /* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	'use strict';
 
 	var _react = __webpack_require__(1);
 
@@ -20200,40 +20208,90 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _react2.default.createClass({
-	  displayName: "prompt",
+	var Buttons = function Buttons() {
+	  var xbox = navigator.getGamepads()[0];
+	  var buttonArray = [];
 
-	  render: function render() {
+	  var i = void 0;
+	  var buttonText = void 0;
 
-	    var prompt;
+	  for (i = 0; i < xbox.buttons.length; i++) {
+	    buttonText = 'btn ' + i + ': ';
 
-	    function gamepadSupported() {
-	      return "getGamepads" in navigator;
+	    var disp = buttonText;
+
+	    if (xbox.buttons[i].pressed) {
+	      disp = buttonText += 'pressed';
 	    }
 
-	    if (gamepadSupported()) {
-	      prompt = "To begin using your gamepad, connect it and press any button!";
-	    } else {
-	      prompt = "This browser doesn't support gamepads!";
-	    }
-
-	    return _react2.default.createElement(
-	      "p",
-	      null,
-	      prompt
-	    );
+	    buttonArray.push(disp);
 	  }
-	});
+
+	  return _react2.default.createElement(
+	    'ul',
+	    null,
+	    buttonArray.map(function (name, index) {
+	      return _react2.default.createElement(
+	        'li',
+	        { key: index },
+	        name
+	      );
+	    })
+	  );
+	};
+
+	var Sticks = function Sticks() {
+	  var i = void 0;
+	  var xbox = navigator.getGamepads()[0];
+	  var axis = xbox.axes;
+
+	  var stickText = void 0;
+	  var stickArray = [];
+
+	  for (i = 0; i < axis.length; i++) {
+	    stickText = 'axis ' + i + ': ' + axis[i];
+
+	    var disp = stickText;
+
+	    stickArray.push(disp);
+	  }
+
+	  return _react2.default.createElement(
+	    'ul',
+	    null,
+	    stickArray.map(function (name, index) {
+	      return _react2.default.createElement(
+	        'li',
+	        { key: index },
+	        name
+	      );
+	    })
+	  );
+	};
+
+	var Display = function Display() {
+	  var xbox = navigator.getGamepads()[0];
+	  var type = 'Connected: ' + xbox.id;
+
+	  // render
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    type,
+	    _react2.default.createElement(Buttons, null),
+	    _react2.default.createElement(Sticks, null)
+	  );
+	};
+
+	module.exports = Display;
 
 /***/ },
 /* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
 
@@ -20241,126 +20299,248 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Buttons = _react2.default.createClass({
-	  displayName: "Buttons",
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	  render: function render() {
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	    var xbox = navigator.getGamepads()[0];
-	    var buttonText;
-	    var buttonArray = [];
+	var Canvas = function (_React$Component) {
+	  _inherits(Canvas, _React$Component);
 
-	    for (var i = 0; i < xbox.buttons.length; i++) {
+	  function Canvas() {
+	    _classCallCheck(this, Canvas);
 
-	      buttonText = "Button " + i + ": ";
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Canvas).apply(this, arguments));
+	  }
 
-	      var disp = buttonText;
+	  _createClass(Canvas, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.updateCanvas();
+	    }
+	  }, {
+	    key: 'updateCanvas',
+	    value: function updateCanvas() {
+	      var xbox = undefined;
+	      var canvas = this.refs.canvas;
+	      var ctx = canvas.getContext('2d');
+	      var buttonList = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'SEL', 'STR', 'L3', 'R3', 'up', 'down', 'left', 'right', 'sync'];
 
-	      if (xbox.buttons[i].pressed) {
-	        disp = buttonText += "pressed";
+	      window.addEventListener('gamepadconnected', function () {
+	        xbox = navigator.getGamepads()[0];
+	      });
+
+	      document.body.addEventListener('touchmove', function (e) {
+	        e.preventDefault();
+	      });
+
+	      // resize the canvas to fill browser window dynamically
+	      function resizeCanvas() {
+	        var originalBackgroundColor = void 0;
+	        var tempCnvs = document.createElement('canvas');
+	        var tempCntx = tempCnvs.getContext('2d');
+
+	        tempCnvs.width = window.innerWidth;
+	        tempCnvs.height = window.innerHeight;
+	        tempCntx.fillStyle = originalBackgroundColor;
+	        tempCntx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+	        tempCntx.drawImage(canvas, 0, 0);
+
+	        canvas.width = window.innerWidth;
+	        canvas.height = window.innerHeight;
+	        ctx.drawImage(tempCnvs, 0, 0);
 	      }
 
-	      buttonArray.push(disp);
+	      window.addEventListener('resize', resizeCanvas, false);
+
+	      resizeCanvas();
+
+	      // Mouse shit
+	      // function getMousePos(canvas, evt) {
+	      //   const rect = canvas.getBoundingClientRect();
+	      //   return {
+	      //     x: evt.clientX - rect.left,
+	      //     y: evt.clientY - rect.top,
+	      //   };
+	      // }
+
+	      function colorPhase(phase, x, y, z) {
+	        var color = void 0;
+	        var red = void 0;
+	        var green = void 0;
+	        var blue = void 0;
+
+	        if (phase === undefined) {
+	          phase = 0;
+	        }
+
+	        var center = 128;
+	        var width = 127;
+	        var frequency = Math.PI * 2 / 10;
+
+	        for (var i = 0; i < 100; ++i) {
+	          red = Math.sin(frequency * i + x + phase) * width + center;
+	          green = Math.sin(frequency * i + y + phase) * width + center;
+	          blue = Math.sin(frequency * i + z + phase) * width + center;
+
+	          color = 'rgb(' + Math.round(red) + ',' + Math.round(green) + ',' + Math.round(blue) + ')';
+	        }
+
+	        return color;
+	      }
+
+	      function Player() {
+	        var _this2 = this;
+
+	        this.settings = {
+	          x: window.innerWidth / 2,
+	          y: window.innerHeight / 2,
+	          r: 2,
+	          g: 0,
+	          b: 4,
+	          height: 5,
+	          width: 5,
+	          size: 100,
+	          A: false,
+	          B: false,
+	          X: false,
+	          Y: false,
+	          RT: false,
+	          LT: false,
+	          RB: false,
+	          LB: false,
+	          up: false,
+	          down: false,
+	          left: false,
+	          right: false,
+	          speed: 5,
+	          color: 0,
+	          AxisX: 0,
+	          AxisY: 1,
+
+	          render: function render() {
+	            var THAT = _this2.settings;
+	            THAT.updatePosition();
+	            // ctx.rect(THAT.x, THAT.y, THAT.size, THAT.size);
+	            ctx.beginPath();
+	            ctx.arc(THAT.x, THAT.y, THAT.size, 0, 2 * Math.PI);
+	            ctx.fillStyle = colorPhase(THAT.color / 15, THAT.r, THAT.g, THAT.b);
+	            ctx.fill();
+	          },
+
+	          updatePosition: function updatePosition() {
+	            var THAT = _this2.settings;
+	            if (xbox !== undefined) {
+	              THAT.up ? THAT.y = THAT.y + xbox.axes[THAT.AxisY] * THAT.speed : false;
+	              THAT.down ? THAT.y = THAT.y + xbox.axes[THAT.AxisY] * THAT.speed : false;
+	              THAT.left ? THAT.x = THAT.x + xbox.axes[THAT.AxisX] * THAT.speed : false;
+	              THAT.right ? THAT.x = THAT.x + xbox.axes[THAT.AxisX] * THAT.speed : false;
+	            }
+
+	            if (THAT.LB) {
+	              THAT.speed = 2.5;
+	            } else if (THAT.RB) {
+	              THAT.speed = 10;
+	            } else {
+	              THAT.speed = 5;
+	            }
+
+	            if (THAT.Y) {
+	              THAT.r = 1;
+	              THAT.g = 0;
+	              THAT.b = 5;
+	            } else {
+	              THAT.r = 2;
+	              THAT.g = 0;
+	              THAT.b = 4;
+	            }
+
+	            if (THAT.size >= 20) {
+	              THAT.RT ? THAT.size++ : false;
+	              THAT.LT ? THAT.size-- : false;
+	            } else {
+	              THAT.size = 20;
+	            }
+	          }
+	        };
+	      }
+
+	      var player1 = new Player({});
+	      // const player2 = new Player({});
+
+	      var p1 = player1.settings;
+	      // const p2 = player2.settings;
+	      // const players = [p1];
+
+	      function initializeTouch() {
+	        canvas.addEventListener('touchmove', function (evt) {
+	          // const mousePos = getMousePos(canvas, evt);
+	          // const message = `Mouse position: ${mousePos.x}, ${mousePos.y}`;
+	          var force = evt.targetTouches[0].force;
+
+	          p1.x = evt.targetTouches[0].pageX;
+	          p1.y = evt.targetTouches[0].pageY;
+	          p1.color++;
+	          p1.size = force * 100;
+	        }, false);
+	      }
+
+	      window.addEventListener('load', initializeTouch, false);
+
+	      function animLoop() {
+	        var i = void 0;
+	        window.requestAnimationFrame(animLoop, 1000 / 60);
+
+	        if (!p1.X) {
+	          if (p1.up || p1.down || p1.left || p1.right) {
+	            p1.color++;
+	          }
+	        }
+
+	        // if (!p2.X) {
+	        //   if (p2.up || p2.down || p2.left || p2.right) {
+	        //     p2.color++;
+	        //   }
+	        // }
+
+	        if (xbox !== undefined) {
+	          for (i = 0; i < xbox.buttons.length; i++) {
+	            xbox.axes[p1.AxisY] < 0 ? p1.up = true : p1.up = false;
+	            xbox.axes[p1.AxisY] > 0 ? p1.down = true : p1.down = false;
+	            xbox.axes[p1.AxisX] > 0 ? p1.right = true : p1.right = false;
+	            xbox.axes[p1.AxisX] < 0 ? p1.left = true : p1.left = false;
+
+	            // xbox.axes[p2.AxisY] < 0 ? p2.up = true : p2.up = false;
+	            // xbox.axes[p2.AxisY] > 0 ? p2.down = true : p2.down = false;
+	            // xbox.axes[p2.AxisX] > 0 ? p2.right = true : p2.right = false;
+	            // xbox.axes[p2.AxisX] < 0 ? p2.left = true : p2.left = false;
+
+	            xbox.buttons[i].pressed ? p1[buttonList[i]] = true : p1[buttonList[i]] = false;
+	            // xbox.buttons[i].pressed ? p2[buttonList[i]] = true : p2[buttonList[i]] = false;
+	          }
+	        }
+
+	        // players.forEach((player) => {
+	        //   player.render();
+	        // });
+
+	        p1.render();
+	      }
+
+	      animLoop();
 	    }
-
-	    return _react2.default.createElement(
-	      "ul",
-	      null,
-	      buttonArray.map(function (name, index) {
-	        return _react2.default.createElement(
-	          "li",
-	          { key: index },
-	          name
-	        );
-	      })
-	    );
-	  }
-	});
-
-	var Sticks = _react2.default.createClass({
-	  displayName: "Sticks",
-
-	  render: function render() {
-
-	    var xbox = navigator.getGamepads()[0];
-
-	    var axis = xbox.axes;
-
-	    var L_STICK_X = axis[0];
-	    var L_STICK_Y = axis[1];
-	    var R_STICK_X = axis[2];
-	    var R_STICK_Y = axis[3];
-
-	    var up, down, left, right;
-
-	    var stickText;
-	    var stickArray = [];
-
-	    for (var i = 0; i < axis.length; i++) {
-
-	      stickText = "Stick " + i + ": " + axis[i];
-
-	      var disp = stickText;
-
-	      stickArray.push(disp);
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('canvas', { ref: 'canvas' });
 	    }
+	  }]);
 
-	    if (L_STICK_X > 0.25) {
-	      right = true;
-	    } else right = false;
-	    if (L_STICK_X < -0.25) {
-	      left = true;
-	    } else left = false;
-	    if (L_STICK_Y > 0.25) {
-	      down = true;
-	    } else down = false;
-	    if (L_STICK_Y < -0.25) {
-	      up = true;
-	    } else up = false;
+	  return Canvas;
+	}(_react2.default.Component);
 
-	    if (right && !up && !down) console.log('E');
-	    if (left && !up && !down) console.log('W');
-	    if (down && !left && !right) console.log('S');
-	    if (up && !left && !right) console.log('N');
-
-	    if (up && right) console.log('NE');
-	    if (up && left) console.log('NW');
-	    if (down && left) console.log('SW');
-	    if (down && right) console.log('SE');
-
-	    return _react2.default.createElement(
-	      "ul",
-	      null,
-	      stickArray.map(function (name, index) {
-	        return _react2.default.createElement(
-	          "li",
-	          { key: index },
-	          name
-	        );
-	      })
-	    );
-	  }
-	});
-
-	exports.default = _react2.default.createClass({
-	  displayName: "controller",
-
-	  render: function render() {
-
-	    var xbox = navigator.getGamepads()[0];
-	    var type = "Connected: " + xbox.id;
-
-	    // render
-	    return _react2.default.createElement(
-	      "div",
-	      null,
-	      type,
-	      _react2.default.createElement(Buttons, null),
-	      _react2.default.createElement(Sticks, null)
-	    );
-	  }
-	});
+	module.exports = Canvas;
 
 /***/ }
 /******/ ]);

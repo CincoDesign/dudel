@@ -1,27 +1,19 @@
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
-const dashboard = new Dashboard();
-
 module.exports = {
-  entry: './app.jsx',
+  entry: './index.js',
   output: {
     filename: 'bundle.js',
   },
-  watch: true,
   module: {
-    loaders: [{
-      test: [/\.js$/, /\.es6$/, /\.jsx$/],
-      exclude: /node_modules/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['react', 'es2015'],
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
       },
-    }],
+    ],
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['*', '.js', '.jsx'],
   },
-  plugins: [
-    new DashboardPlugin(dashboard.setData),
-  ],
+  plugins: [],
 };

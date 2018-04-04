@@ -1,2 +1,7 @@
 # dudel
-HTML5 gamepad / force-touch API drawing tool.
+HTML5 touchscreen/force-touch/gamepad API drawing demo tool.
+
+```
+npm install
+npm start
+```

@@ -1,3 +1,5 @@
+/* globals navigator */
+
 import React from 'react';
 
 const Buttons = () => {
@@ -7,13 +9,13 @@ const Buttons = () => {
   let i;
   let buttonText;
 
-  for (i = 0; i < xbox.buttons.length; i++) {
+  for (i = 0; i < xbox.buttons.length; i += 1) {
     buttonText = `btn ${i}: `;
 
     let disp = buttonText;
 
     if (xbox.buttons[i].pressed) {
-      disp = buttonText += 'pressed';
+      disp = `${buttonText}pressed`;
     }
 
     buttonArray.push(disp);
@@ -21,7 +23,7 @@ const Buttons = () => {
 
   return (
     <ul>
-      {buttonArray.map((name, index) => <li key={index}>{name}</li>)}
+      {buttonArray.map(name => <li key={name}>{name}</li>)}
     </ul>
   );
 };
@@ -34,7 +36,7 @@ const Sticks = () => {
   let stickText;
   const stickArray = [];
 
-  for (i = 0; i < axis.length; i++) {
+  for (i = 0; i < axis.length; i += 1) {
     stickText = `axis ${i}: ${axis[i]}`;
 
     const disp = stickText;
@@ -44,7 +46,7 @@ const Sticks = () => {
 
   return (
     <ul>
-      {stickArray.map((name, index) => <li key={index}>{name}</li>)}
+      {stickArray.map(name => <li key={name}>{name}</li>)}
     </ul>
   );
 };

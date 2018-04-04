@@ -1,48 +1,97 @@
-<!doctype html>
-<title>Dudel</title>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 
-<style>
-  body, html {
-    overflow: hidden;
-    -webkit-overflow-scrolling: none;
+<head>
+  <meta charset="utf-8">
+  <title>Dudel</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <style>
+  * {
+    box-sizing: border-box;
   }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background: #222;
+      color: white;
+      font-family: monospace;
+      user-select: none;
+      font-size: 15px;
+    }
 
-  body {
-    background: black;
-    font-family: monospace;
-    margin: 0;
-    overflow: hidden;
-    color: white;
-  }
+    #controls {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0.5rem;
+      width: 100%;
+    }
 
-  #gamepadPrompt {
-    position: absolute;
-    padding: 20px;
-  }
+    button {
+      font-size: 13px;
+      outline: 0;
+      cursor: pointer;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      border-radius: 5px;
+      padding: 0.5em 1em;
+      line-height: 1;
+    }
 
-  #gamepadDisplay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 20%;
-    background: rgba(0,0,0,0.2);
-    color: white;
-    padding: 20px;
-    z-index: 100;
-  }
+    a {
+      color: white;
+      text-decoration: underline;
+    }
 
-  #game {
-    background: black;
-    position: absolute;
-    display: block;
-  }
-</style>
+    #gamepadDisplay {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 20%;
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      padding: 20px;
+      z-index: 100;
+      display: none;
+    }
+
+    #doodleCanvas {
+      user-select: none;
+      display: block;
+      background: black;
+      overflow: hidden;
+    }
+
+    .byline {
+      padding: 0.5rem 1rem;
+      float: right;
+    }
+
+  </style>
+</head>
 
 <body>
-  <div id="gamepadPrompt"></div>
+  <div id="controls">
+    <button id="clear">Clear</Button>
+    <button id="eraser">Erase</Button>
+    <div class="byline">Dudel by <a href="http://cabe.io" target="_blank">Cabe</a></div>
+  </div>
   <div id="gamepadDisplay"></div>
-  <div id="gameCanvas"></div>
-
-  <script src="/bundle.js"></script>
-
+  <div id="doodleCanvas"></div>
+  <script src="./dist/bundle.js"></script>
+  <script type="text/jscript">
+    const body = document.body
+    body.addEventListener('touchmove', (e) => {
+      e.preventDefault()
+    }, false);
+  </script>
 </body>
+
+</html>

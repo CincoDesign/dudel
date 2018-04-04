@@ -1,193 +1,57 @@
 /* globals window, document, navigator */
-// TODO: lint, refactor
 
 import React, { Component } from 'react';
+import Brush from './brush';
+import { buttonList } from './controller';
 
 class Canvas extends Component {
-  componentDidMount() {
-    this.updateCanvas();
+  constructor() {
+    super();
+
+    this.state = {
+      xbox: null,
+    };
+
+    this.resizeCanvas = this.resizeCanvas.bind(this);
   }
 
-  updateCanvas() {
-    let xbox;
-    const canvas = this.refs.canvas;
-    const ctx = canvas.getContext('2d');
-    const buttonList = [
-      'A',
-      'B',
-      'X',
-      'Y',
-      'LB',
-      'RB',
-      'LT',
-      'RT',
-      'SEL',
-      'STR',
-      'L3',
-      'R3',
-      'up',
-      'down',
-      'left',
-      'right',
-      'sync',
-    ];
-
-    window.addEventListener('gamepadconnected', () => {
-      xbox = navigator.getGamepads()[0];
+  componentWillMount() {
+    this.setState({ xbox: navigator.getGamepads()[0] }, () => {
+      this.initilizeCanvas();
     });
+  }
+
+  resizeCanvas() {
+    const { canvas } = this;
+    const context = canvas.getContext('2d');
+
+    const tmpCanvas = document.createElement('canvas');
+    const tmpContext = tmpCanvas.getContext('2d');
+
+    tmpCanvas.width = window.innerWidth;
+    tmpCanvas.height = window.innerHeight;
+    tmpContext.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    tmpContext.drawImage(canvas, 0, 0);
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    context.drawImage(tmpCanvas, 0, 0);
+  }
+
+  initilizeCanvas() {
+    const { canvas } = this;
+    const context = canvas.getContext('2d');
+    const { xbox } = this.state;
+    const brush = new Brush(canvas, context, xbox);
+
+    // controls
+    const eraser = document.getElementById('eraser');
+    const clear = document.getElementById('clear');
 
     // resize the canvas to fill browser window dynamically
-    function resizeCanvas() {
-      const tempCnvs = document.createElement('canvas');
-      const tempCntx = tempCnvs.getContext('2d');
+    this.resizeCanvas();
 
-      tempCnvs.width = window.innerWidth;
-      tempCnvs.height = window.innerHeight;
-      tempCntx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-      tempCntx.drawImage(canvas, 0, 0);
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      ctx.drawImage(tempCnvs, 0, 0);
-    }
-
-    window.addEventListener('resize', resizeCanvas, false);
-
-    resizeCanvas();
-
-    function colorPhase(phase, x, y, z) {
-      let color;
-      let red;
-      let green;
-      let blue;
-
-      if (phase === undefined) {
-        phase = 0;
-      }
-
-      const center = 128;
-      const width = 127;
-      const frequency = Math.PI * 2 / 10;
-
-      for (let i = 0; i < 100; ++i) {
-        red = Math.sin(frequency * i + x + phase) * width + center;
-        green = Math.sin(frequency * i + y + phase) * width + center;
-        blue = Math.sin(frequency * i + z + phase) * width + center;
-
-        color = `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`;
-      }
-
-      return color;
-    }
-
-    function Brush() {
-      this.settings = {
-        x: -100,
-        y: -100,
-        r: 2,
-        g: 0,
-        b: 4,
-        height: 5,
-        width: 5,
-        size: 50,
-        A: false,
-        B: false,
-        X: false,
-        Y: false,
-        RT: false,
-        LT: false,
-        RB: false,
-        LB: false,
-        up: false,
-        down: false,
-        left: false,
-        right: false,
-        speed: 5,
-        color: 0,
-        AxisX: 0,
-        AxisY: 1,
-        lx: -1000,
-        ly: -1000,
-        prevX: window.innerWidth / 2,
-        prevY: window.innerHeight / 2,
-        eraser: false,
-        clear: false,
-        frame: 0,
-
-        render: () => {
-          const _BRUSH_ = this.settings;
-          let color = colorPhase(_BRUSH_.color / 20, _BRUSH_.r, _BRUSH_.g, _BRUSH_.b);
-
-          _BRUSH_.updatePosition();
-
-          if (_BRUSH_.eraser) color = 'black';
-
-          ctx.beginPath();
-          ctx.moveTo(_BRUSH_.lx, _BRUSH_.ly);
-          ctx.lineTo(_BRUSH_.x, _BRUSH_.y);
-          ctx.lineWidth = _BRUSH_.size;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-          ctx.strokeStyle = color;
-          ctx.stroke();
-
-          if (_BRUSH_.clear) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-          }
-        },
-
-        updatePosition: () => {
-          const _BRUSH_ = this.settings;
-          if (xbox !== undefined) {
-            _BRUSH_.up
-              ? _BRUSH_.y += xbox.axes[_BRUSH_.AxisY] * _BRUSH_.speed
-              : false;
-            _BRUSH_.down
-              ? _BRUSH_.y += xbox.axes[_BRUSH_.AxisY] * _BRUSH_.speed
-              : false;
-            _BRUSH_.left
-              ? _BRUSH_.x += xbox.axes[_BRUSH_.AxisX] * _BRUSH_.speed
-              : false;
-            _BRUSH_.right
-              ? _BRUSH_.x += xbox.axes[_BRUSH_.AxisX] * _BRUSH_.speed
-              : false;
-          }
-
-          if (_BRUSH_.LB) {
-            _BRUSH_.speed = 2.5;
-          } else if (_BRUSH_.RB) {
-            _BRUSH_.speed = 10;
-          } else {
-            _BRUSH_.speed = 5;
-          }
-
-          if (_BRUSH_.Y) {
-            _BRUSH_.r = 1;
-            _BRUSH_.g = 0;
-            _BRUSH_.b = 5;
-          } else {
-            _BRUSH_.r = 2;
-            _BRUSH_.g = 0;
-            _BRUSH_.b = 4;
-          }
-
-          if (_BRUSH_.size >= 20) {
-            _BRUSH_.RT
-              ? _BRUSH_.size++
-              : false;
-            _BRUSH_.LT
-              ? _BRUSH_.size--
-              : false;
-          } else {
-            _BRUSH_.size = 20;
-          }
-        },
-      };
-    }
-
-    const brush = new Brush({});
-
-    const br = brush.settings;
+    const { settings, controller } = brush;
 
     function doodle(evt) {
       let x;
@@ -200,26 +64,27 @@ class Canvas extends Component {
       if (evt.type === 'touchmove') {
         x = evt.targetTouches[0].pageX;
         y = evt.targetTouches[0].pageY;
-        br.size = evt.targetTouches[0].force * 100;
+        settings.size = evt.targetTouches[0].force * 100;
       }
 
-      if (br.frame === 0) {
-        br.prevX = x;
-        br.prevY = y;
+      if (settings.frame === 0) {
+        settings.prevX = x;
+        settings.prevY = y;
       }
 
-      br.x = x;
-      br.y = y;
-      br.lx = br.prevX;
-      br.ly = br.prevY;
-      br.color += 1;
-      br.frame += 1;
+      settings.x = x;
+      settings.y = y;
+      settings.lx = settings.prevX;
+      settings.ly = settings.prevY;
+      settings.color += 1;
+      settings.frame += 1;
 
       // store
-      br.prevX = x;
-      br.prevY = y;
+      settings.prevX = x;
+      settings.prevY = y;
     }
 
+    // Attach the events to the DOM
     function initializeMouse() {
       canvas.addEventListener('mousemove', doodle, false);
     }
@@ -228,77 +93,91 @@ class Canvas extends Component {
       canvas.addEventListener('touchmove', doodle, false);
     }
 
-    canvas.addEventListener('mouseup', () => {
-      br.frame = 0;
-      br.x = -1000; br.y = -1000;
-      br.lx = -1000; br.ly = -1000;
-      canvas.removeEventListener('mousemove', doodle, false);
-    }, false);
+    window.addEventListener('resize', this.resizeCanvas, false);
 
-    canvas.addEventListener('touchend', () => {
-      br.frame = 0;
-      br.x = -1000; br.y = -1000;
-      br.lx = -1000; br.ly = -1000;
-      canvas.removeEventListener('touchmove', doodle, false);
-    }, false);
+    canvas.addEventListener(
+      'mouseup',
+      () => {
+        settings.frame = 0;
+        settings.x = -1000;
+        settings.y = -1000;
+        settings.lx = -1000;
+        settings.ly = -1000;
+        canvas.removeEventListener('mousemove', doodle, false);
+      },
+      false,
+    );
+
+    canvas.addEventListener(
+      'touchend',
+      () => {
+        settings.frame = 0;
+        settings.x = -1000;
+        settings.y = -1000;
+        settings.lx = -1000;
+        settings.ly = -1000;
+        canvas.removeEventListener('touchmove', doodle, false);
+      },
+      false,
+    );
 
     canvas.addEventListener('touchstart', initializeTouch, false);
     canvas.addEventListener('mousedown', initializeMouse, false);
 
-    const eraser = document.getElementById('eraser');
-    const clear = document.getElementById('clear');
-
     eraser.addEventListener('click', () => {
-      br.eraser = !br.eraser;
-      if (br.eraser) eraser.style = 'background: white; color: black';
+      settings.eraser = !settings.eraser;
+      if (settings.eraser) eraser.style = 'background: white; color: black';
       else eraser.style = '';
     });
 
     clear.addEventListener('click', () => {
-      br.clear = true;
-      setTimeout(() => { br.clear = false; }, 100);
+      settings.clear = true;
+      setTimeout(() => {
+        settings.clear = false;
+      }, 100);
     });
 
     function renderLoop() {
       let i;
       window.requestAnimationFrame(renderLoop, 1000 / 60);
 
-      if (!br.X) {
-        if (br.up || br.down || br.left || br.right) {
-          br.color++;
+      if (!controller.X) {
+        if (settings.up || settings.down || settings.left || settings.right) {
+          settings.color += 1;
         }
       }
 
-      if (xbox !== undefined) {
-        for (i = 0; i < xbox.buttons.length; i++) {
-          xbox.axes[br.AxisY] < 0
-            ? br.up = true
-            : br.up = false;
-          xbox.axes[br.AxisY] > 0
-            ? br.down = true
-            : br.down = false;
-          xbox.axes[br.AxisX] > 0
-            ? br.right = true
-            : br.right = false;
-          xbox.axes[br.AxisX] < 0
-            ? br.left = true
-            : br.left = false;
+      if (xbox) {
+        if (xbox.axes[controller.AxisY] < 0) controller.up = true;
+        else settings.up = false;
+        if (xbox.axes[controller.AxisY] > 0) controller.down = true;
+        else settings.down = false;
+        if (xbox.axes[controller.AxisX] > 0) controller.right = true;
+        else settings.right = false;
+        if (xbox.axes[controller.AxisX] < 0) controller.left = true;
+        else settings.left = false;
 
-          xbox.buttons[i].pressed
-            ? br[buttonList[i]] = true
-            : br[buttonList[i]] = false;
+        for (i = 0; i < xbox.buttons.length; i += 1) {
+          if (xbox.buttons[i].pressed) controller[buttonList[i]] = true;
+          else controller[buttonList[i]] = false;
         }
       }
 
-      br.render();
+      brush.draw();
     }
 
     renderLoop();
   }
 
   render() {
-    return <canvas ref="canvas" />;
+    return (
+      <canvas
+        ref={(c) => {
+          this.canvas = c;
+        }}
+      />
+    );
   }
 }
 
-module.exports = Canvas;
+export default Canvas;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const Buttons = () => {
+function Buttons() {
   const xbox = navigator.getGamepads()[0];
   const buttonArray = [];
 
@@ -26,9 +26,9 @@ const Buttons = () => {
       {buttonArray.map(name => <li key={name}>{name}</li>)}
     </ul>
   );
-};
+}
 
-const Sticks = () => {
+function Sticks() {
   let i;
   const xbox = navigator.getGamepads()[0];
   const axis = xbox.axes;
@@ -49,7 +49,7 @@ const Sticks = () => {
       {stickArray.map(name => <li key={name}>{name}</li>)}
     </ul>
   );
-};
+}
 
 const Display = () => {
   const xbox = navigator.getGamepads()[0];
@@ -65,4 +65,24 @@ const Display = () => {
   );
 };
 
-module.exports = Display;
+export const buttonList = [
+  'A',
+  'B',
+  'X',
+  'Y',
+  'LB',
+  'RB',
+  'LT',
+  'RT',
+  'SEL',
+  'STR',
+  'L3',
+  'R3',
+  'up',
+  'down',
+  'left',
+  'right',
+  'sync',
+];
+
+export default Display;

@@ -47,6 +47,8 @@ class Canvas extends Component {
     // controls
     const eraser = document.getElementById('eraser');
     const clear = document.getElementById('clear');
+    const replay = document.getElementById('replay');
+    const loop = document.getElementById('loop');
 
     // resize the canvas to fill browser window dynamically
     this.resizeCanvas();
@@ -62,9 +64,12 @@ class Canvas extends Component {
       }
 
       if (evt.type === 'touchmove') {
-        x = evt.targetTouches[0].pageX;
-        y = evt.targetTouches[0].pageY;
-        settings.size = evt.targetTouches[0].force * 100;
+        const touches = evt.targetTouches;
+        for (let i = 0; i < touches.length; i += 1) {
+          x = touches[i].pageX;
+          y = touches[i].pageY;
+          settings.size = touches[i].force * 100;
+        }
       }
 
       if (settings.frame === 0) {
@@ -126,15 +131,49 @@ class Canvas extends Component {
 
     eraser.addEventListener('click', () => {
       settings.eraser = !settings.eraser;
-      if (settings.eraser) eraser.style = 'background: white; color: black';
-      else eraser.style = '';
+      eraser.classList.toggle('active');
     });
 
     clear.addEventListener('click', () => {
-      settings.clear = true;
-      setTimeout(() => {
-        settings.clear = false;
-      }, 100);
+      brush.clear();
+      brush.history = [brush.initialHistory];
+      settings.eraser = false;
+      settings.replay = false;
+      settings.loop = false;
+      settings.frame = 0;
+
+      loop.classList.remove('active');
+      eraser.classList.remove('active');
+    });
+
+    replay.addEventListener('click', () => {
+      if (!settings.replay) {
+        brush.clear();
+        settings.eraser = false;
+        settings.replay = true;
+
+        eraser.classList.remove('active');
+      }
+    });
+
+    loop.addEventListener('click', () => {
+      settings.frame = 0;
+      brush.clear();
+      if (settings.loop) {
+        settings.loop = false;
+        settings.replay = false;
+        brush.history = [brush.initialHistory];
+        replay.disabled = false;
+        eraser.disabled = false;
+      } else {
+        settings.loop = true;
+        settings.replay = true;
+        replay.disabled = true;
+        eraser.disabled = true;
+      }
+
+      loop.classList.toggle('active');
+      eraser.classList.remove('active');
     });
 
     function renderLoop() {
@@ -163,7 +202,11 @@ class Canvas extends Component {
         }
       }
 
-      brush.draw();
+      if (settings.replay) {
+        brush.replay();
+      } else {
+        brush.draw();
+      }
     }
 
     renderLoop();

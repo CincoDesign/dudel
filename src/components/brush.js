@@ -18,8 +18,20 @@ class Brush {
       prevY: window.innerHeight / 2,
       eraser: false,
       clear: false,
+      replay: false,
+      loop: false,
       frame: 0,
+      stall: 0,
     };
+
+    this.initialHistory = {
+      from: [-1000, -1000],
+      to: [-1000, -1000],
+      size: this.settings.size,
+      color: this.settings.color,
+    };
+
+    this.history = [this.initialHistory];
 
     this.controller = {
       type: xbox,
@@ -57,24 +69,78 @@ class Brush {
     return `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`;
   }
 
-  draw() {
-    const BRUSH = this.settings;
-    let color = this.colorPhase(BRUSH.color / 30);
-
-    if (BRUSH.eraser) color = 'black';
-    if (BRUSH.clear) {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-    this.controllerPosition();
+  line(lx, ly, x, y, size, color) {
     this.context.beginPath();
-    this.context.moveTo(BRUSH.lx, BRUSH.ly);
-    this.context.lineTo(BRUSH.x, BRUSH.y);
-    this.context.lineWidth = BRUSH.size;
+    this.context.moveTo(lx, ly);
+    this.context.lineTo(x, y);
+    this.context.lineWidth = size;
     this.context.lineCap = 'round';
     this.context.lineJoin = 'round';
     this.context.strokeStyle = color;
     this.context.stroke();
+  }
+
+  draw() {
+    let color = this.colorPhase(this.settings.color / 30);
+
+    if (this.settings.eraser) {
+      color = 'rgb(0,0,0)';
+    }
+
+    const BRUSH = this.settings;
+    const {
+      lx, ly, x, y, size,
+    } = BRUSH;
+
+    const data = {
+      from: [lx, ly],
+      to: [x, y],
+      size,
+      color,
+    };
+
+    if (BRUSH.frame !== 0) {
+      if (!BRUSH.replay) {
+        this.history.push(data);
+      }
+    }
+
+    if (BRUSH.clear) {
+      this.clear();
+    }
+
+    this.line(lx, ly, x, y, size, color);
+  }
+
+  replay() {
+    const loop = this.history.length - 1;
+    const stall = 60;
+    const history = this.history[this.settings.frame];
+
+    const lx = history.from[0];
+    const ly = history.from[1];
+    const x = history.to[0];
+    const y = history.to[1];
+    const { size, color } = history;
+
+    if (this.settings.frame < loop) {
+      this.settings.frame += 1;
+      this.line(lx, ly, x, y, size, color);
+    } else if (!this.settings.loop) {
+      this.settings.frame = 0;
+      this.settings.replay = false;
+    } else {
+      this.settings.stall += 1;
+      if (this.settings.stall >= stall) {
+        this.settings.stall = 0;
+        this.settings.frame = 0;
+        this.clear();
+      }
+    }
+  }
+
+  clear() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   controllerPosition() {

@@ -160,7 +160,7 @@ class Brush {
     this.settings.speed = 5;
     this.settings.height = 5;
     this.settings.width = 127;
-    this.settings.size = 50;
+    // this.settings.size = 50;
     this.settings.eraser = false;
     this.settings.replay = false;
     this.settings.loop = false;

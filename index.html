@@ -41,6 +41,7 @@
         top: 0;
         padding: 0.5rem;
         width: 100%;
+        z-index: 100;
       }
 
       button {
@@ -83,11 +84,37 @@
       }
 
       #doodleCanvas {
+        position: absolute;
         user-select: none;
         display: block;
         overflow: hidden;
         background: transparent;
+        /* z-index: 10000; */
+        top: 0; left: 0;
       }
+
+      video, #basicallySnapchat {
+        /* width: 100%;
+        object-fit: cover; */
+      }
+
+      video, #basicallySnapchat {
+        position: absolute;
+        user-select: none;
+        pointer-events: none;
+        background: transparent;
+        /* z-index: -1; */
+        top: 0; left: 0;
+      }
+
+      #basicallySnapchat {
+        /* width: 100%;
+        height: 100%; */
+      }
+
+      /* canvas {
+        mix-blend-mode: screen;
+      } */
 
       .byline {
         position: fixed;
@@ -135,6 +162,48 @@
       label div {
         margin-top: 0;
       }
+
+      #snapBlock {
+        position: fixed;
+        left: 50%;
+        bottom: 10%;
+        text-align: center;
+      }
+
+      #snapBtn {
+
+        border-radius: 50%;
+        width: 75px;
+        height: 75px;
+        line-height: 50px;
+
+        padding: 0;
+      }
+
+      #snapOff {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .sizing {
+        position: fixed;
+        left: 0;
+        top: 50%;
+      }
+
+      .sizing button {
+        display: block;
+        margin-top: 5px;
+        width: 40px;
+      }
+
+      #size {
+        text-align: center;
+        padding: 0.5em;
+        line-height: 25px;
+        height: 32px;
+      }
     </style>
   </head>
 
@@ -144,13 +213,34 @@
       <button id="eraser">Eraser</button>
       <button id="replay">Replay</button>
       <button id="loop">Loop</button>
+      <button id="videoBtn">Video</button>
       <button id="bliss">Bliss</button>
+
+      <div id="snapBlock" style="display:none">
+        <button id="snapBtn">Snap!</button>
+        <button id="snapOff">&times;</button>
+      </div>
+
+      <div class="sizing">
+        <button id="sizeUp">+</button>
+        <div id="size">50</div>
+        <button id="sizeDown">-</button>
+      </div>
+
+
+
 
       <div class="byline">Dudel by
         <a href="http://cabe.io" target="_blank">Cabe</a>
       </div>
     </div>
+
+    <video id="video"></video>
+    <canvas id="videoCanvas"></canvas>
+    <canvas id="basicallySnapchat"></canvas>
+
     <canvas id="doodleCanvas"></canvas>
+
     <script src="./dist/bundle.js"></script>
     <script type="text/jscript">
       const body = document.body

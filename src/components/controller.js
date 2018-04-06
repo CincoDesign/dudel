@@ -1,20 +1,21 @@
 /* globals navigator */
 
-import React from 'react';
+import React, { Component } from 'react';
 
-function Buttons() {
-  const xbox = navigator.getGamepads()[0];
+function Buttons(props) {
   const buttonArray = [];
+  const buttons = props.buttons;
 
+  console.log(buttons);
   let i;
   let buttonText;
 
-  for (i = 0; i < xbox.buttons.length; i += 1) {
+  for (i = 0; i < props.buttons.length; i += 1) {
     buttonText = `btn ${i}: `;
 
     let disp = buttonText;
 
-    if (xbox.buttons[i].pressed) {
+    if (props.buttons[i].pressed) {
       disp = `${buttonText}pressed`;
     }
 
@@ -28,10 +29,9 @@ function Buttons() {
   );
 }
 
-function Sticks() {
+function Sticks(props) {
   let i;
-  const xbox = navigator.getGamepads()[0];
-  const axis = xbox.axes;
+  const axis = props.axes;
 
   let stickText;
   const stickArray = [];
@@ -51,19 +51,32 @@ function Sticks() {
   );
 }
 
-const Display = () => {
-  const xbox = navigator.getGamepads()[0];
-  const type = `Connected: ${xbox.id}`;
+class Display extends Component {
+  constructor() {
+    super();
 
-  // render
-  return (
-    <div>
-      {type}
-      <Buttons />
-      <Sticks />
-    </div>
-  );
-};
+    this.state = {
+      xbox: {},
+    };
+  }
+
+  componentWillMount() {
+    this.setState({
+      xbox: navigator.getGamepads()[0],
+    });
+  }
+
+  render() {
+    const { xbox } = this.state;
+    return (
+      <div className="pad">
+        {`Connected: ${xbox.id}`}
+        <Buttons buttons={xbox.buttons} />
+        <Sticks axes={xbox.axes} />
+      </div>
+    );
+  }
+}
 
 export const buttonList = [
   'A',

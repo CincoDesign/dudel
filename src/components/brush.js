@@ -1,7 +1,9 @@
 /* globals window */
 
+import { buttonList } from './controller';
+
 class Brush {
-  constructor(canvas, context, xbox) {
+  constructor(canvas, context) {
     this.settings = {
       x: -100,
       y: -100,
@@ -22,6 +24,7 @@ class Brush {
       loop: false,
       frame: 0,
       stall: 0,
+      clean: true,
     };
 
     this.initialHistory = {
@@ -34,7 +37,7 @@ class Brush {
     this.history = [this.initialHistory];
 
     this.controller = {
-      type: xbox,
+      type: null,
       A: false,
       B: false,
       X: false,
@@ -80,7 +83,11 @@ class Brush {
     this.context.stroke();
   }
 
-  draw() {
+  record(data) {
+    this.history.push(data);
+  }
+
+  draw(xbox) {
     let color = this.colorPhase(this.settings.color / 30);
 
     if (this.settings.eraser) {
@@ -92,6 +99,13 @@ class Brush {
       lx, ly, x, y, size,
     } = BRUSH;
 
+    if (BRUSH.clear) {
+      this.clear();
+    }
+
+    this.line(lx, ly, x, y, size, color);
+    this.controllerPosition(xbox);
+
     const data = {
       from: [lx, ly],
       to: [x, y],
@@ -101,15 +115,9 @@ class Brush {
 
     if (BRUSH.frame !== 0) {
       if (!BRUSH.replay) {
-        this.history.push(data);
+        this.record(data);
       }
     }
-
-    if (BRUSH.clear) {
-      this.clear();
-    }
-
-    this.line(lx, ly, x, y, size, color);
   }
 
   replay() {
@@ -143,23 +151,60 @@ class Brush {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  controllerPosition() {
+  controllerPosition(xbox) {
+    const CTRL = this.controller;
     const BRUSH = this.settings;
-    const xbox = this.controller.type;
 
-    if (xbox) {
-      if (BRUSH.up) (BRUSH.y += xbox.axes[BRUSH.AxisY] * BRUSH.speed);
-      if (BRUSH.down) (BRUSH.y += xbox.axes[BRUSH.AxisY] * BRUSH.speed);
-      if (BRUSH.left) (BRUSH.x += xbox.axes[BRUSH.AxisX] * BRUSH.speed);
-      if (BRUSH.right) (BRUSH.x += xbox.axes[BRUSH.AxisX] * BRUSH.speed);
-      if (BRUSH.LB) {
-        BRUSH.speed = 2.5;
-      } else if (BRUSH.RB) {
-        BRUSH.speed = 10;
-      } else {
-        BRUSH.speed = 5;
+    function update() {
+      BRUSH.xbox = true;
+      BRUSH.color += 1;
+      BRUSH.frame += 1;
+    }
+
+    if (xbox && !BRUSH.clean) {
+      if (
+        xbox.axes[CTRL.AxisY] < 0 ||
+        xbox.axes[CTRL.AxisY] > 0 ||
+        xbox.axes[CTRL.AxisX] > 0 ||
+        xbox.axes[CTRL.AxisX] < 0) {
+        update();
       }
-      if (BRUSH.Y) {
+
+      if (xbox.axes[CTRL.AxisY] === 0 && xbox.axes[CTRL.AxisX] === 0 && BRUSH.xbox) {
+        BRUSH.frame = 0;
+        BRUSH.xbox = false;
+      }
+
+      for (let i = 0; i < xbox.buttons.length; i += 1) {
+        if (xbox.buttons[i].pressed) CTRL[buttonList[i]] = true;
+        else CTRL[buttonList[i]] = false;
+      }
+
+      BRUSH.y += xbox.axes[CTRL.AxisY] * CTRL.speed;
+      BRUSH.y += xbox.axes[CTRL.AxisY] * CTRL.speed;
+      BRUSH.x += xbox.axes[CTRL.AxisX] * CTRL.speed;
+      BRUSH.x += xbox.axes[CTRL.AxisX] * CTRL.speed;
+
+      if (!CTRL.B) {
+        BRUSH.ly = BRUSH.prevY;
+        BRUSH.ly = BRUSH.prevY;
+        BRUSH.lx = BRUSH.prevX;
+        BRUSH.lx = BRUSH.prevX;
+      }
+
+      BRUSH.prevY += xbox.axes[CTRL.AxisY] * CTRL.speed;
+      BRUSH.prevY += xbox.axes[CTRL.AxisY] * CTRL.speed;
+      BRUSH.prevX += xbox.axes[CTRL.AxisX] * CTRL.speed;
+      BRUSH.prevX += xbox.axes[CTRL.AxisX] * CTRL.speed;
+
+      if (CTRL.LB) {
+        CTRL.speed = 2.5;
+      } else if (CTRL.RB) {
+        CTRL.speed = 10;
+      } else {
+        CTRL.speed = 5;
+      }
+      if (CTRL.Y) {
         BRUSH.r = 1;
         BRUSH.g = 0;
         BRUSH.b = 5;
@@ -170,8 +215,8 @@ class Brush {
       }
 
       if (BRUSH.size >= 20) {
-        if (BRUSH.RT) BRUSH.size += 1;
-        if (BRUSH.LT) BRUSH.size -= 1;
+        if (CTRL.RT) BRUSH.size += 1;
+        if (CTRL.LT) BRUSH.size -= 1;
       } else {
         BRUSH.size = 20;
       }

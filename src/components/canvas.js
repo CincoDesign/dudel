@@ -2,23 +2,17 @@
 
 import React, { Component } from 'react';
 import Brush from './brush';
-import { buttonList } from './controller';
 
 class Canvas extends Component {
   constructor() {
     super();
 
-    this.state = {
-      xbox: null,
-    };
 
     this.resizeCanvas = this.resizeCanvas.bind(this);
   }
 
-  componentWillMount() {
-    this.setState({ xbox: navigator.getGamepads()[0] }, () => {
-      this.initilizeCanvas();
-    });
+  componentDidMount() {
+    this.initilizeCanvas();
   }
 
   resizeCanvas() {
@@ -41,8 +35,8 @@ class Canvas extends Component {
   initilizeCanvas() {
     const { canvas } = this;
     const context = canvas.getContext('2d');
-    const { xbox } = this.state;
-    const brush = new Brush(canvas, context, xbox);
+    // const { xbox } = this.state;
+    const brush = new Brush(canvas, context);
 
     // controls
     const eraser = document.getElementById('eraser');
@@ -53,9 +47,10 @@ class Canvas extends Component {
     // resize the canvas to fill browser window dynamically
     this.resizeCanvas();
 
-    const { settings, controller } = brush;
+    const { settings } = brush;
 
     function doodle(evt) {
+      if (settings.clean) settings.clean = false;
       let x;
       let y;
       if (evt.type === 'mousemove') {
@@ -82,7 +77,8 @@ class Canvas extends Component {
       settings.lx = settings.prevX;
       settings.ly = settings.prevY;
       settings.color += 1;
-      settings.frame += 1;
+
+      if (!settings.xbox) settings.frame += 1;
 
       // store
       settings.prevX = x;
@@ -91,10 +87,12 @@ class Canvas extends Component {
 
     // Attach the events to the DOM
     function initializeMouse() {
+      settings.frame = 0;
       canvas.addEventListener('mousemove', doodle, false);
     }
 
     function initializeTouch() {
+      settings.frame = 0;
       canvas.addEventListener('touchmove', doodle, false);
     }
 
@@ -104,10 +102,7 @@ class Canvas extends Component {
       'mouseup',
       () => {
         settings.frame = 0;
-        settings.x = -1000;
-        settings.y = -1000;
-        settings.lx = -1000;
-        settings.ly = -1000;
+
         canvas.removeEventListener('mousemove', doodle, false);
       },
       false,
@@ -117,10 +112,7 @@ class Canvas extends Component {
       'touchend',
       () => {
         settings.frame = 0;
-        settings.x = -1000;
-        settings.y = -1000;
-        settings.lx = -1000;
-        settings.ly = -1000;
+
         canvas.removeEventListener('touchmove', doodle, false);
       },
       false,
@@ -141,12 +133,23 @@ class Canvas extends Component {
       settings.replay = false;
       settings.loop = false;
       settings.frame = 0;
+      settings.clean = true;
+      settings.x = -100;
+      settings.y = -100;
+      settings.lx = -100;
+      settings.ly = -100;
 
       loop.classList.remove('active');
       eraser.classList.remove('active');
     });
 
     replay.addEventListener('click', () => {
+      settings.frame = 0;
+      settings.clean = true;
+      settings.x = -100;
+      settings.y = -100;
+      settings.lx = -100;
+      settings.ly = -100;
       if (!settings.replay) {
         brush.clear();
         settings.eraser = false;
@@ -158,6 +161,11 @@ class Canvas extends Component {
 
     loop.addEventListener('click', () => {
       settings.frame = 0;
+      settings.clean = true;
+      settings.x = -100;
+      settings.y = -100;
+      settings.lx = -100;
+      settings.ly = -100;
       brush.clear();
       if (settings.loop) {
         settings.loop = false;
@@ -165,11 +173,13 @@ class Canvas extends Component {
         brush.history = [brush.initialHistory];
         replay.disabled = false;
         eraser.disabled = false;
+        clear.disabled = false;
       } else {
         settings.loop = true;
         settings.replay = true;
         replay.disabled = true;
         eraser.disabled = true;
+        clear.disabled = true;
       }
 
       loop.classList.toggle('active');
@@ -177,35 +187,14 @@ class Canvas extends Component {
     });
 
     function renderLoop() {
-      let i;
       window.requestAnimationFrame(renderLoop, 1000 / 60);
 
-      if (!controller.X) {
-        if (settings.up || settings.down || settings.left || settings.right) {
-          settings.color += 1;
-        }
-      }
-
-      if (xbox) {
-        if (xbox.axes[controller.AxisY] < 0) controller.up = true;
-        else settings.up = false;
-        if (xbox.axes[controller.AxisY] > 0) controller.down = true;
-        else settings.down = false;
-        if (xbox.axes[controller.AxisX] > 0) controller.right = true;
-        else settings.right = false;
-        if (xbox.axes[controller.AxisX] < 0) controller.left = true;
-        else settings.left = false;
-
-        for (i = 0; i < xbox.buttons.length; i += 1) {
-          if (xbox.buttons[i].pressed) controller[buttonList[i]] = true;
-          else controller[buttonList[i]] = false;
-        }
-      }
+      const xbox = navigator.getGamepads()[0];
 
       if (settings.replay) {
         brush.replay();
       } else {
-        brush.draw();
+        brush.draw(xbox);
       }
     }
 
@@ -214,11 +203,13 @@ class Canvas extends Component {
 
   render() {
     return (
-      <canvas
-        ref={(c) => {
+      <div>
+        <canvas
+          ref={(c) => {
           this.canvas = c;
         }}
-      />
+        />
+      </div>
     );
   }
 }

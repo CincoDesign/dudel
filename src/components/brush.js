@@ -2,30 +2,33 @@
 
 import { buttonList } from './controller';
 
+const initialState = {
+  x: -100,
+  y: -100,
+  lx: -100,
+  ly: -100,
+  prevX: -100,
+  prevY: -100,
+  frame: 0,
+  stall: 0,
+  r: 2,
+  g: 0,
+  b: 4,
+  speed: 5,
+  height: 5,
+  width: 127,
+  size: 50,
+  color: 0,
+  eraser: false,
+  replay: false,
+  loop: false,
+  clean: true,
+  gradient: '',
+};
+
 class Brush {
   constructor(canvas, context) {
-    this.settings = {
-      x: -100,
-      y: -100,
-      r: 2,
-      g: 0,
-      b: 4,
-      height: 5,
-      width: 5,
-      size: 50,
-      color: 0,
-      lx: -1000,
-      ly: -1000,
-      prevX: window.innerWidth / 2,
-      prevY: window.innerHeight / 2,
-      eraser: false,
-      clear: false,
-      replay: false,
-      loop: false,
-      frame: 0,
-      stall: 0,
-      clean: true,
-    };
+    this.settings = initialState;
 
     this.initialHistory = {
       from: [-1000, -1000],
@@ -46,13 +49,12 @@ class Brush {
       LT: false,
       RB: false,
       LB: false,
-      up: false,
-      down: false,
-      left: false,
-      right: false,
-      speed: 5,
-      AxisX: 0,
-      AxisY: 1,
+      UP: false,
+      DOWN: false,
+      LEFT: false,
+      RIGHT: false,
+      AXIS_X: 0,
+      AXIS_Y: 1,
     };
 
     this.draw = this.draw.bind(this);
@@ -63,24 +65,28 @@ class Brush {
 
   colorPhase(phase) {
     const center = 128;
-    const width = 128;
+    const { width } = this.settings;
     const frequency = (Math.PI * 2);
-    const red = (Math.sin(frequency + this.settings.r + phase) * width) + center;
-    const green = (Math.sin(frequency + this.settings.g + phase) * width) + center;
-    const blue = (Math.sin(frequency + this.settings.b + phase) * width) + center;
+    const steps = this.settings.height;
+    const red = (Math.sin((frequency / steps) + this.settings.r + phase) * width) + center;
+    const green = (Math.sin((frequency / steps) + this.settings.g + phase) * width) + center;
+    const blue = (Math.sin((frequency / steps) + this.settings.b + phase) * width) + center;
+
+    this.settings.gradient = `linear-gradient(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`;
 
     return `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`;
   }
 
   line(lx, ly, x, y, size, color) {
-    this.context.beginPath();
-    this.context.moveTo(lx, ly);
-    this.context.lineTo(x, y);
-    this.context.lineWidth = size;
-    this.context.lineCap = 'round';
-    this.context.lineJoin = 'round';
-    this.context.strokeStyle = color;
-    this.context.stroke();
+    const { context } = this;
+    context.beginPath();
+    context.moveTo(lx, ly);
+    context.lineTo(x, y);
+    context.lineWidth = size;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    context.strokeStyle = color;
+    context.stroke();
   }
 
   record(data) {
@@ -88,19 +94,14 @@ class Brush {
   }
 
   draw(xbox) {
+    const {
+      lx, ly, x, y, size, eraser, frame, replay,
+    } = this.settings;
+
     let color = this.colorPhase(this.settings.color / 30);
 
-    if (this.settings.eraser) {
+    if (eraser) {
       color = 'rgb(0,0,0)';
-    }
-
-    const BRUSH = this.settings;
-    const {
-      lx, ly, x, y, size,
-    } = BRUSH;
-
-    if (BRUSH.clear) {
-      this.clear();
     }
 
     this.line(lx, ly, x, y, size, color);
@@ -113,8 +114,8 @@ class Brush {
       color,
     };
 
-    if (BRUSH.frame !== 0) {
-      if (!BRUSH.replay) {
+    if (frame !== 0) {
+      if (!replay) {
         this.record(data);
       }
     }
@@ -151,6 +152,26 @@ class Brush {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  reset() {
+    this.settings.x = -100;
+    this.settings.y = -100;
+    this.settings.lx = -100;
+    this.settings.ly = -100;
+    this.settings.prevX = -100;
+    this.settings.prevY = -100;
+    this.settings.frame = 0;
+    this.settings.stall = 0;
+    this.settings.speed = 5;
+    this.settings.height = 5;
+    this.settings.width = 5;
+    this.settings.size = 50;
+    this.settings.color = 0;
+    this.settings.eraser = false;
+    this.settings.replay = false;
+    this.settings.loop = false;
+    this.settings.clean = true;
+  }
+
   controllerPosition(xbox) {
     const CTRL = this.controller;
     const BRUSH = this.settings;
@@ -163,14 +184,14 @@ class Brush {
 
     if (xbox && !BRUSH.clean) {
       if (
-        xbox.axes[CTRL.AxisY] < 0 ||
-        xbox.axes[CTRL.AxisY] > 0 ||
-        xbox.axes[CTRL.AxisX] > 0 ||
-        xbox.axes[CTRL.AxisX] < 0) {
+        xbox.axes[CTRL.AXIS_Y] < 0 ||
+        xbox.axes[CTRL.AXIS_Y] > 0 ||
+        xbox.axes[CTRL.AXIS_X] > 0 ||
+        xbox.axes[CTRL.AXIS_X] < 0) {
         update();
       }
 
-      if (xbox.axes[CTRL.AxisY] === 0 && xbox.axes[CTRL.AxisX] === 0 && BRUSH.xbox) {
+      if (xbox.axes[CTRL.AXIS_Y] === 0 && xbox.axes[CTRL.AXIS_X] === 0 && BRUSH.xbox) {
         BRUSH.frame = 0;
         BRUSH.xbox = false;
       }
@@ -180,29 +201,23 @@ class Brush {
         else CTRL[buttonList[i]] = false;
       }
 
-      BRUSH.y += xbox.axes[CTRL.AxisY] * CTRL.speed;
-      BRUSH.y += xbox.axes[CTRL.AxisY] * CTRL.speed;
-      BRUSH.x += xbox.axes[CTRL.AxisX] * CTRL.speed;
-      BRUSH.x += xbox.axes[CTRL.AxisX] * CTRL.speed;
+      BRUSH.y += xbox.axes[CTRL.AXIS_Y] * CTRL.speed;
+      BRUSH.x += xbox.axes[CTRL.AXIS_X] * CTRL.speed;
 
       if (!CTRL.B) {
         BRUSH.ly = BRUSH.prevY;
-        BRUSH.ly = BRUSH.prevY;
-        BRUSH.lx = BRUSH.prevX;
         BRUSH.lx = BRUSH.prevX;
       }
 
-      BRUSH.prevY += xbox.axes[CTRL.AxisY] * CTRL.speed;
-      BRUSH.prevY += xbox.axes[CTRL.AxisY] * CTRL.speed;
-      BRUSH.prevX += xbox.axes[CTRL.AxisX] * CTRL.speed;
-      BRUSH.prevX += xbox.axes[CTRL.AxisX] * CTRL.speed;
+      BRUSH.prevY += xbox.axes[CTRL.AXIS_Y] * CTRL.speed;
+      BRUSH.prevX += xbox.axes[CTRL.AXIS_X] * CTRL.speed;
 
       if (CTRL.LB) {
-        CTRL.speed = 2.5;
+        BRUSH.speed = 2.5;
       } else if (CTRL.RB) {
-        CTRL.speed = 10;
+        BRUSH.speed = 10;
       } else {
-        CTRL.speed = 5;
+        BRUSH.speed = 5;
       }
       if (CTRL.Y) {
         BRUSH.r = 1;

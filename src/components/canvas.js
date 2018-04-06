@@ -27,9 +27,7 @@ class Canvas {
     const { settings } = brush;
 
     // resize the canvas to fill browser window dynamically
-    // setTimeout(() => {
     this.resizeCanvas();
-    // }, 2000);
 
     function doodle(evt) {
       if (settings.clean) settings.clean = false;
@@ -42,11 +40,9 @@ class Canvas {
 
       if (evt.type === 'touchmove' || evt.type === 'touchstart') {
         const touches = evt.targetTouches;
-        for (let i = 0; i < touches.length; i += 1) {
-          x = touches[i].pageX;
-          y = touches[i].pageY;
-          settings.size = touches[i].force * 100;
-        }
+        x = touches[0].pageX;
+        y = touches[0].pageY;
+        settings.size = touches[0].force * 100;
       }
 
       if (settings.frame === 0) {
@@ -59,8 +55,7 @@ class Canvas {
       settings.lx = settings.prevX;
       settings.ly = settings.prevY;
       settings.color += 1;
-
-      if (!settings.xbox) settings.frame += 1;
+      settings.frame += 1;
 
       // store
       settings.prevX = x;
@@ -105,10 +100,14 @@ class Canvas {
     canvas.addEventListener('touchstart', initializeTouch, false);
     canvas.addEventListener('mousedown', initializeMouse, false);
 
+    const gamePads = navigator.getGamepads();
+    let xbox = gamePads[0];
+
     function renderLoop() {
       window.requestAnimationFrame(renderLoop, 1000 / 60);
 
-      const xbox = navigator.getGamepads()[0];
+      // controller is broken
+      xbox = null;
 
       if (settings.replay) {
         brush.replay();

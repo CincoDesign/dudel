@@ -8,11 +8,11 @@ class Controls {
     this.loopBtn = document.getElementById('loop');
     this.blissBtn = document.getElementById('bliss');
 
-    this.rInput = document.getElementById('red');
-    this.gInput = document.getElementById('green');
-    this.bInput = document.getElementById('blue');
-    this.freq = document.getElementById('freq');
-    this.step = document.getElementById('step');
+    // this.rInput = document.getElementById('red');
+    // this.gInput = document.getElementById('green');
+    // this.bInput = document.getElementById('blue');
+    // this.freq = document.getElementById('freq');
+    // this.step = document.getElementById('step');
 
     this.eraserBtn.addEventListener('click', () => this.eraser());
     this.clearBtn.addEventListener('click', () => this.clear());
@@ -20,11 +20,11 @@ class Controls {
     this.loopBtn.addEventListener('click', () => this.loop());
     this.blissBtn.addEventListener('click', () => this.bliss());
 
-    this.rInput.addEventListener('change', e => this.upVal('r', e.target));
-    this.gInput.addEventListener('change', e => this.upVal('g', e.target));
-    this.bInput.addEventListener('change', e => this.upVal('b', e.target));
-    this.freq.addEventListener('change', e => this.upVal('width', e.target));
-    this.step.addEventListener('change', e => this.upVal('height', e.target));
+    // this.rInput.addEventListener('change', e => this.upVal('r', e.target));
+    // this.gInput.addEventListener('change', e => this.upVal('g', e.target));
+    // this.bInput.addEventListener('change', e => this.upVal('b', e.target));
+    // this.freq.addEventListener('change', e => this.upVal('width', e.target));
+    // this.step.addEventListener('change', e => this.upVal('height', e.target));
 
     this.eraser = this.eraser.bind(this);
     this.clear = this.clear.bind(this);
@@ -35,9 +35,9 @@ class Controls {
     this.settings = this.brush.settings;
   }
 
-  upVal(color, target) {
-    this.settings[color] = parseInt(target.value, 10);
-  }
+  // upVal(color, target) {
+  //   this.settings[color] = parseInt(target.value, 10);
+  // }
 
   clear() {
     const { brush, loopBtn, eraserBtn } = this;
@@ -62,7 +62,6 @@ class Controls {
   replay() {
     const { brush, settings, eraserBtn } = this;
     settings.frame = 0;
-    settings.clean = true;
     settings.x = -100;
     settings.y = -100;
     settings.lx = -100;

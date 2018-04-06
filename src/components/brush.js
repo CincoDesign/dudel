@@ -1,5 +1,3 @@
-/* globals window */
-
 import { buttonList } from './controller';
 
 const initialState = {
@@ -71,8 +69,6 @@ class Brush {
     const red = (Math.sin((frequency / steps) + this.settings.r + phase) * width) + center;
     const green = (Math.sin((frequency / steps) + this.settings.g + phase) * width) + center;
     const blue = (Math.sin((frequency / steps) + this.settings.b + phase) * width) + center;
-
-    this.settings.gradient = `linear-gradient(${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)})`;
 
     return `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`;
   }
@@ -163,9 +159,8 @@ class Brush {
     this.settings.stall = 0;
     this.settings.speed = 5;
     this.settings.height = 5;
-    this.settings.width = 5;
+    this.settings.width = 127;
     this.settings.size = 50;
-    this.settings.color = 0;
     this.settings.eraser = false;
     this.settings.replay = false;
     this.settings.loop = false;

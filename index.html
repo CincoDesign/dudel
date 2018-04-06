@@ -145,32 +145,7 @@
       <button id="replay">Replay</button>
       <button id="loop">Loop</button>
       <button id="bliss">Bliss</button>
-      <div style="float:right">
-        <label>
-          <div>Phase 1</div>
-          <input id="red" type="range" min="0" max="10" step="1" value="2"></input>
-        </label>
-        <label>
-          <div>Phase 2</div>
-          <input id="green" type="range" min="0" max="10" step="1" value="0">
-            <span></span></input>
-        </label>
-        <label>
-          <div>Phase 2</div>
-          <input id="blue" type="range" min="0" max="10" step="1" value="4">
-            <span></span></input>
-        </label>
-        <label>
-          <div>Frequency</div>
-          <input id="freq" type="range" min="0" max="255" step="1" value="127">
-            <span></span></input>
-        </label>
-        <label>
-          <div>Step</div>
-          <input id="step" type="range" min="0" max="100" step="1" value="1">
-            <span></span></input>
-        </label>
-      </div>
+
       <div class="byline">Dudel by
         <a href="http://cabe.io" target="_blank">Cabe</a>
       </div>
@@ -179,9 +154,8 @@
     <script src="./dist/bundle.js"></script>
     <script type="text/jscript">
       const body = document.body
-      body.addEventListener('touchmove', (e) => e.preventDefault(), false);
+      body.addEventListener('touchmove', e => e.preventDefault(), false);
       body.addEventListener('contextmenu', e => e.preventDefault(), false);
     </script>
   </body>
-
 </html>

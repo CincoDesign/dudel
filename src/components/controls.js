@@ -16,8 +16,9 @@ class Controls {
 
     this.videoScrn = document.getElementById('video');
 
-    this.sizeUpBtn = document.getElementById('sizeUp');
-    this.sizeDownBtn = document.getElementById('sizeDown');
+    // this.sizeUpBtn = document.getElementById('sizeUp');
+    // this.sizeDownBtn = document.getElementById('sizeDown');
+    this.sizer = document.getElementById('sizer');
 
     this.snapChat = document.getElementById('basicallySnapchat');
     this.snapChatBtn = document.getElementById('snapBtn');
@@ -39,8 +40,9 @@ class Controls {
     this.videoBtn.addEventListener('click', () => this.video());
     this.snapChatBtn.addEventListener('click', () => this.snap());
     this.snapOffBtn.addEventListener('click', () => this.snapOff());
-    this.sizeUpBtn.addEventListener('click', () => this.sizeUp());
-    this.sizeDownBtn.addEventListener('click', () => this.sizeDown());
+    // this.sizeUpBtn.addEventListener('click', () => this.sizeUp());
+    // this.sizeDownBtn.addEventListener('click', () => this.sizeDown());
+    this.sizer.addEventListener('change', event => this.sizeSlider(event));
 
     // this.rInput.addEventListener('change', e => this.upVal('r', e.target));
     // this.gInput.addEventListener('change', e => this.upVal('g', e.target));
@@ -75,7 +77,9 @@ class Controls {
       return false;
     }
 
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+    })
       .then((stream) => {
         this.videoScrn.srcObject = stream;
         this.videoScrn.setAttribute('autoplay', true);
@@ -90,6 +94,12 @@ class Controls {
   }
 
   snap() {
+    const that = this;
+
+    function snapText(text) {
+      that.snapChatBtn.innerHTML = text;
+    }
+
     function calculateSize(srcSize, dstSize) {
       const srcRatio = srcSize.width / srcSize.height;
       const dstRatio = dstSize.width / dstSize.height;
@@ -105,17 +115,56 @@ class Controls {
       };
     }
 
-    if (this.videoBtn.classList.contains('active')) {
-      const video = this.videoScrn;
-      const canvas = this.snapChat;
-      const videoSize = { width: video.videoWidth, height: video.videoHeight };
-      const canvasSize = { width: canvas.width, height: canvas.height };
+    function snapIt() {
+      const video = that.videoScrn;
+      const canvas = that.snapChat;
+      const videoSize = {
+        width: video.videoWidth,
+        height: video.videoHeight,
+      };
+      const canvasSize = {
+        width: canvas.width,
+        height: canvas.height,
+      };
       const renderSize = calculateSize(videoSize, canvasSize);
       const xOffset = (canvasSize.width - renderSize.width) / 2;
 
       canvas.style = 'display: block';
 
       canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
+    }
+
+    let timer = 3;
+    let downdown;
+
+    function stopCountdown() {
+      clearInterval(downdown);
+    }
+
+    function startCountdown() {
+      timer -= 1;
+      that.snapChatBtn.innerHTML = timer;
+
+      if (timer === 0) {
+        that.snapChatBtn.innerHTML = 'Snap!';
+        that.snapChatBtn.classList.add('active');
+        that.snapChatBtn.classList.remove('woooooooo');
+        snapIt();
+        stopCountdown();
+      }
+    }
+
+    function countdown() {
+      that.snapChatBtn.classList.remove('active');
+      that.snapChatBtn.classList.add('woooooooo');
+      downdown = setInterval(startCountdown, 1000);
+    }
+
+
+    if (this.videoBtn.classList.contains('active')) {
+      that.snapChatBtn.innerHTML = timer;
+      this.snapOff();
+      countdown();
     }
   }
 
@@ -124,7 +173,11 @@ class Controls {
   }
 
   clear() {
-    const { brush, loopBtn, eraserBtn } = this;
+    const {
+      brush,
+      loopBtn,
+      eraserBtn,
+    } = this;
     brush.clear();
     brush.history = [brush.initialHistory];
     brush.reset();
@@ -134,7 +187,10 @@ class Controls {
   }
 
   eraser() {
-    const { settings, eraserBtn } = this;
+    const {
+      settings,
+      eraserBtn,
+    } = this;
     settings.eraser = !settings.eraser;
     settings.x = -100;
     settings.y = -100;
@@ -144,7 +200,11 @@ class Controls {
   }
 
   replay() {
-    const { brush, settings, eraserBtn } = this;
+    const {
+      brush,
+      settings,
+      eraserBtn,
+    } = this;
     settings.frame = 0;
     settings.x = -100;
     settings.y = -100;
@@ -162,7 +222,12 @@ class Controls {
 
   loop() {
     const {
-      brush, settings, replayBtn, loopBtn, eraserBtn, clearBtn,
+      brush,
+      settings,
+      replayBtn,
+      loopBtn,
+      eraserBtn,
+      clearBtn,
     } = this;
     settings.frame = 0;
     settings.clean = true;
@@ -207,6 +272,12 @@ class Controls {
     this.brush.reset();
     this.settings.size -= 2;
     this.sizeCounter = this.settings.size;
+    document.getElementById('size').innerHTML = this.settings.size;
+  }
+
+  sizeSlider(event) {
+    this.brush.reset();
+    this.settings.size = event.target.value;
     document.getElementById('size').innerHTML = this.settings.size;
   }
 }

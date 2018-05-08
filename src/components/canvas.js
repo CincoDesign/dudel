@@ -42,7 +42,7 @@ class Canvas {
         const touches = evt.targetTouches;
         x = touches[0].pageX;
         y = touches[0].pageY;
-        settings.size = touches[0].force * 100;
+        // settings.size = touches[0].force * 100;
       }
 
       if (settings.frame === 0) {
@@ -104,8 +104,6 @@ class Canvas {
     let xbox = gamePads[0];
 
     function renderLoop() {
-      window.requestAnimationFrame(renderLoop, 1000 / 60);
-
       // controller is broken
       xbox = null;
 
@@ -114,6 +112,8 @@ class Canvas {
       } else {
         brush.draw(xbox);
       }
+
+      window.requestAnimationFrame(renderLoop);
     }
 
     renderLoop();

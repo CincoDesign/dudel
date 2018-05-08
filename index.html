@@ -129,13 +129,15 @@
         border: 2px solid white;
         padding: 0;
         margin: 0;
+        width: 300px;
+        height: 40px;
       }
 
       input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 12px;
-        height: 12px;
+        width: 20px;
+        height: 40px;
         border-radius: 0;
         background: #fff;
         cursor: pointer;
@@ -190,19 +192,44 @@
         position: fixed;
         left: 0;
         top: 50%;
+        width: 40px;
+        height: 40px;
       }
 
-      .sizing button {
+      /* .sizing button {
         display: block;
         margin-top: 5px;
         width: 40px;
-      }
+      } */
 
       #size {
         text-align: center;
         padding: 0.5em;
-        line-height: 25px;
-        height: 32px;
+        line-height: 1;
+        height: 0;
+        position: absolute;
+        top: -180px;
+        width: 40px;
+      }
+
+      #sizer {
+        transform: rotate(270deg) translateX(-50%) translateY(0%);
+        transform-origin: 0 0;
+      }
+
+      @keyframes woo {
+        from {
+          background: rgba(255,255,255,0);
+          transform: scale(1);
+        }
+        to {
+          background: rgba(255,255,255,1);
+          transform: scale(0);
+        }
+      }
+
+      .woooooooo {
+        animation: woo 3s linear;
       }
     </style>
   </head>
@@ -222,10 +249,12 @@
       </div>
 
       <div class="sizing">
-        <button id="sizeUp">+</button>
+        <!-- <button id="sizeUp">+</button>
+        <button id="sizeDown">-</button> -->
         <div id="size">50</div>
-        <button id="sizeDown">-</button>
+        <input id="sizer" type="range" min="1" max="100" value="50" step="1">
       </div>
+      
 
 
 

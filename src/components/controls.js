@@ -7,6 +7,8 @@ const height = window.innerHeight;
 
 class Controls {
   constructor(brush) {
+    this.gifOff = false;
+
     this.eraserBtn = document.getElementById('eraser');
     this.clearBtn = document.getElementById('clear');
     this.replayBtn = document.getElementById('replay');
@@ -26,6 +28,10 @@ class Controls {
     this.snapOffBtn = document.getElementById('snapOff');
 
 
+    this.gifBro = document.getElementById('gifBro');
+    this.gifCanvas = document.getElementById('gifCanvas');
+
+
     // this.rInput = document.getElementById('red');
     // this.gInput = document.getElementById('green');
     // this.bInput = document.getElementById('blue');
@@ -40,6 +46,8 @@ class Controls {
     this.videoBtn.addEventListener('click', () => this.video());
     this.snapChatBtn.addEventListener('click', () => this.snap());
     this.snapOffBtn.addEventListener('click', () => this.snapOff());
+
+    this.gifBro.addEventListener('click', () => this.giffy());
     // this.sizeUpBtn.addEventListener('click', () => this.sizeUp());
     // this.sizeDownBtn.addEventListener('click', () => this.sizeDown());
     this.sizer.addEventListener('change', event => this.sizeSlider(event));
@@ -58,10 +66,13 @@ class Controls {
     this.brush = brush;
     this.settings = this.brush.settings;
 
-    this.videoScrn.width = this.snapChat.width = width;
-    this.videoScrn.height = this.snapChat.height = height;
+    this.videoScrn.width = this.snapChat.width = this.gifCanvas.width = width;
+    this.videoScrn.height = this.snapChat.height = this.gifCanvas.height = height;
 
     this.sizeCounter = this.settings.size;
+
+    this.gogogo = null;
+    this.gifArray = [];
   }
 
   // upVal(color, target) {
@@ -95,10 +106,7 @@ class Controls {
 
   snap() {
     const that = this;
-
-    function snapText(text) {
-      that.snapChatBtn.innerHTML = text;
-    }
+    this.gifOff = true;
 
     function calculateSize(srcSize, dstSize) {
       const srcRatio = srcSize.width / srcSize.height;
@@ -115,35 +123,53 @@ class Controls {
       };
     }
 
+    const video = that.videoScrn;
+    const canvas = that.snapChat;
+    const videoSize = {
+      width: video.videoWidth,
+      height: video.videoHeight,
+    };
+    const canvasSize = {
+      width: canvas.width,
+      height: canvas.height,
+    };
+    const renderSize = calculateSize(videoSize, canvasSize);
+    const xOffset = (canvasSize.width - renderSize.width) / 2;
+
     function snapIt() {
-      const video = that.videoScrn;
-      const canvas = that.snapChat;
-      const videoSize = {
-        width: video.videoWidth,
-        height: video.videoHeight,
-      };
-      const canvasSize = {
-        width: canvas.width,
-        height: canvas.height,
-      };
-      const renderSize = calculateSize(videoSize, canvasSize);
-      const xOffset = (canvasSize.width - renderSize.width) / 2;
-
       canvas.style = 'display: block';
-
       canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
     }
 
-    let timer = 3;
+    let len = this.gifArray.length;
+    let timer = 20;
     let downdown;
+
+    function gifIt() {
+      canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
+      const frame = canvas.getContext('2d').getImageData(xOffset, 0, renderSize.width, renderSize.height);
+      that.gifArray.push(frame);
+    }
+
+
+    function loopsBoi() {
+      if (len >= that.gifArray.length - 1) {
+        len = 0;
+      } else len += 1;
+
+      that.gifCanvas.getContext('2d').putImageData(that.gifArray[len], xOffset, 0);
+    }
+
 
     function stopCountdown() {
       clearInterval(downdown);
+      that.gogogo = setInterval(loopsBoi, 100);
     }
 
-    function startCountdown() {
+    function countingDown() {
       timer -= 1;
       that.snapChatBtn.innerHTML = timer;
+      gifIt();
 
       if (timer === 0) {
         that.snapChatBtn.innerHTML = 'Snap!';
@@ -156,12 +182,18 @@ class Controls {
 
     function countdown() {
       that.snapChatBtn.classList.remove('active');
+      that.gifBro.classList.remove('active');
       that.snapChatBtn.classList.add('woooooooo');
-      downdown = setInterval(startCountdown, 1000);
+      that.gifCanvas.style = 'display: none';
+      that.gifArray = [];
+      clearInterval(that.gogogo);
+      downdown = setInterval(countingDown, 100);
+      that.gifOff = false;
     }
 
 
     if (this.videoBtn.classList.contains('active')) {
+      this.gifCanvas.style = 'display: none';
       that.snapChatBtn.innerHTML = timer;
       this.snapOff();
       countdown();
@@ -169,7 +201,20 @@ class Controls {
   }
 
   snapOff() {
+    this.gifCanvas.style = 'display: none';
     this.snapChat.style = 'display: none';
+    this.snapChatBtn.classList.remove('active');
+    this.gifBro.classList.remove('active');
+  }
+
+  giffy() {
+    if (this.gifBro.classList.contains('active')) {
+      this.gifCanvas.style = 'display: none';
+      this.gifBro.classList.remove('active');
+    } else {
+      this.gifCanvas.style = 'display: block';
+      this.gifBro.classList.add('active');
+    }
   }
 
   clear() {

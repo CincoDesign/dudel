@@ -98,7 +98,7 @@
         object-fit: cover; */
       }
 
-      video, #basicallySnapchat {
+      video, #basicallySnapchat, #gifCanvas {
         position: absolute;
         user-select: none;
         pointer-events: none;
@@ -131,6 +131,7 @@
         margin: 0;
         width: 300px;
         height: 40px;
+        border-radius: 5px;
       }
 
       input[type=range]::-webkit-slider-thumb {
@@ -170,15 +171,14 @@
         left: 50%;
         bottom: 10%;
         text-align: center;
+        transform: translateX(-50%);
       }
 
       #snapBtn {
-
         border-radius: 50%;
         width: 75px;
         height: 75px;
         line-height: 50px;
-
         padding: 0;
       }
 
@@ -186,6 +186,12 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
+      }
+
+      #gifBro {
+        width: 60px;
+        height: 40px;
+        border-radius: 5px;
       }
 
       .sizing {
@@ -244,6 +250,7 @@
       <button id="bliss">Bliss</button>
 
       <div id="snapBlock" style="display:none">
+        <button id="gifBro">Gif!</button>
         <button id="snapBtn">Snap!</button>
         <button id="snapOff">&times;</button>
       </div>
@@ -267,7 +274,7 @@
     <video id="video"></video>
     <canvas id="videoCanvas"></canvas>
     <canvas id="basicallySnapchat"></canvas>
-
+    <canvas id="gifCanvas"></canvas>
     <canvas id="doodleCanvas"></canvas>
 
     <script src="./dist/bundle.js"></script>

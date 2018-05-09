@@ -27,6 +27,7 @@
         user-select: none;
         font-size: 15px;
         user-select: none;
+        position: fixed;
         -webkit-overflow-scroll: auto;
       }
 
@@ -174,12 +175,29 @@
         transform: translateX(-50%);
       }
 
+            @keyframes pop {
+        0% {
+          transform: scale(0);
+        }
+        66% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
       #snapBtn {
         border-radius: 50%;
         width: 75px;
         height: 75px;
         line-height: 50px;
         padding: 0;
+      }
+
+      #snapBtn.active {
+        background: white;
+        animation: pop 250ms ease forwards;
       }
 
       #snapOff {
@@ -192,6 +210,11 @@
         width: 60px;
         height: 40px;
         border-radius: 5px;
+      }
+
+      #gifBro.baked {
+        /* border-color: blue;
+        background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 100%); */
       }
 
       .sizing {
@@ -223,19 +246,59 @@
         transform-origin: 0 0;
       }
 
+
+      @keyframes eh {
+        from {
+          transform: translate(-50%, -50%) scale(0);
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+      @keyframes bfade {
+        from {
+          border-color: rgba(255,255,255,1)
+        }
+        to {
+          border-color: rgba(255,255,255,0)
+        }
+      }
       @keyframes woo {
         from {
-          background: rgba(255,255,255,0);
+          /* opacity: 1; */
           transform: scale(1);
         }
         to {
-          background: rgba(255,255,255,1);
+          /* opacity: 0; */
           transform: scale(0);
         }
       }
-
       .woooooooo {
+        border-color: transparent;
+        background: red;
         animation: woo 3s linear;
+      }
+
+      .ehhhh {
+        position: relative;
+        mix-blend-mode: invert;
+        animation: bfade 1.5s ease;
+      }
+      .ehhhh::before {
+        animation: eh 1.5s ease;
+      }
+
+      .ehhhh::before {
+        content: '';
+        background: red;
+        border-radius: 50%;
+        width: 75px;
+        height: 75px;
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+        
       }
     </style>
   </head>
@@ -250,9 +313,9 @@
       <button id="bliss">Bliss</button>
 
       <div id="snapBlock" style="display:none">
-        <button id="gifBro">Gif!</button>
+        <button id="gifBro" disabled>Gif!</button>
         <button id="snapBtn">Snap!</button>
-        <button id="snapOff">&times;</button>
+        <button id="snapOff" disabled>&times;</button>
       </div>
 
       <div class="sizing">
@@ -262,12 +325,8 @@
         <input id="sizer" type="range" min="1" max="100" value="50" step="1">
       </div>
       
-
-
-
-
       <div class="byline">Dudel by
-        <a href="http://cabe.io" target="_blank">Cabe</a>
+        <a href="https://cabe.io" target="_blank">Cabe</a>
       </div>
     </div>
 

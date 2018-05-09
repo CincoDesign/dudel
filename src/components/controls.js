@@ -1,9 +1,7 @@
-/* globals document */
-
+/* globals document, window, navigator */
 
 const width = window.innerWidth;
 const height = window.innerHeight;
-
 
 class Controls {
   constructor(brush) {
@@ -32,12 +30,6 @@ class Controls {
     this.gifCanvas = document.getElementById('gifCanvas');
 
 
-    // this.rInput = document.getElementById('red');
-    // this.gInput = document.getElementById('green');
-    // this.bInput = document.getElementById('blue');
-    // this.freq = document.getElementById('freq');
-    // this.step = document.getElementById('step');
-
     this.eraserBtn.addEventListener('click', () => this.eraser());
     this.clearBtn.addEventListener('click', () => this.clear());
     this.replayBtn.addEventListener('click', () => this.replay());
@@ -47,10 +39,18 @@ class Controls {
     this.snapChatBtn.addEventListener('click', () => this.snap());
     this.snapOffBtn.addEventListener('click', () => this.snapOff());
 
-    this.gifBro.addEventListener('click', () => this.giffy());
+    this.gifBro.addEventListener('click', () => this.gifToggle());
+    this.sizer.addEventListener('change', event => this.sizeSlider(event));
+
     // this.sizeUpBtn.addEventListener('click', () => this.sizeUp());
     // this.sizeDownBtn.addEventListener('click', () => this.sizeDown());
-    this.sizer.addEventListener('change', event => this.sizeSlider(event));
+
+    // this.rInput = document.getElementById('red');
+    // this.gInput = document.getElementById('green');
+    // this.bInput = document.getElementById('blue');
+    // this.freq = document.getElementById('freq');
+    // this.step = document.getElementById('step');
+
 
     // this.rInput.addEventListener('change', e => this.upVal('r', e.target));
     // this.gInput.addEventListener('change', e => this.upVal('g', e.target));
@@ -106,7 +106,8 @@ class Controls {
 
   snap() {
     const that = this;
-    this.gifOff = true;
+    const video = that.videoScrn;
+    const canvas = that.snapChat;
 
     function calculateSize(srcSize, dstSize) {
       const srcRatio = srcSize.width / srcSize.height;
@@ -123,8 +124,6 @@ class Controls {
       };
     }
 
-    const video = that.videoScrn;
-    const canvas = that.snapChat;
     const videoSize = {
       width: video.videoWidth,
       height: video.videoHeight,
@@ -136,14 +135,14 @@ class Controls {
     const renderSize = calculateSize(videoSize, canvasSize);
     const xOffset = (canvasSize.width - renderSize.width) / 2;
 
+    let len = this.gifArray.length;
+    let timer = 30;
+    let downdown;
+
     function snapIt() {
       canvas.style = 'display: block';
       canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
     }
-
-    let len = this.gifArray.length;
-    let timer = 20;
-    let downdown;
 
     function gifIt() {
       canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
@@ -159,7 +158,6 @@ class Controls {
 
       that.gifCanvas.getContext('2d').putImageData(that.gifArray[len], xOffset, 0);
     }
-
 
     function stopCountdown() {
       clearInterval(downdown);
@@ -177,26 +175,35 @@ class Controls {
         that.snapChatBtn.classList.remove('woooooooo');
         snapIt();
         stopCountdown();
+        that.gifBro.disabled = false;
+        that.snapOffBtn.disabled = false;
+        that.gifBro.classList.add('baked');
       }
     }
 
-    function countdown() {
+    function somebodyClickedTheSnapButon() {
+      that.snapChatBtn.classList.add('ehhhh');
+      that.snapChatBtn.innerHTML = 'Ready?';
+
       that.snapChatBtn.classList.remove('active');
+      that.gifBro.disabled = true;
+      that.snapOffBtn.disabled = true;
       that.gifBro.classList.remove('active');
-      that.snapChatBtn.classList.add('woooooooo');
+
       that.gifCanvas.style = 'display: none';
       that.gifArray = [];
       clearInterval(that.gogogo);
-      downdown = setInterval(countingDown, 100);
-      that.gifOff = false;
+      setTimeout(() => {
+        downdown = setInterval(countingDown, 100);
+        that.snapChatBtn.classList.add('woooooooo');
+        that.snapChatBtn.classList.remove('ehhhh');
+      }, 1500);
     }
 
 
     if (this.videoBtn.classList.contains('active')) {
-      this.gifCanvas.style = 'display: none';
-      that.snapChatBtn.innerHTML = timer;
       this.snapOff();
-      countdown();
+      somebodyClickedTheSnapButon();
     }
   }
 
@@ -207,7 +214,7 @@ class Controls {
     this.gifBro.classList.remove('active');
   }
 
-  giffy() {
+  gifToggle() {
     if (this.gifBro.classList.contains('active')) {
       this.gifCanvas.style = 'display: none';
       this.gifBro.classList.remove('active');

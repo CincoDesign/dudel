@@ -1,6 +1,6 @@
 {
-  "name": "dudel",
-  "version": "2.0.0",
+  "name": "doodl",
+  "version": "2.0.1",
   "description": "Doodle app",
   "main": "app.jsx",
   "private": true,
@@ -11,32 +11,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bitmap/dudel.git"
+    "url": "git+https://github.com/bitmap/doodl.git"
   },
   "author": "Cabe Branson",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/bitmap/dudel/issues"
+    "url": "https://github.com/bitmap/doodl/issues"
   },
-  "homepage": "https://github.com/bitmap/dudel#readme",
-  "babel": {
-    "presets": [
-      "env",
-      "stage-2"
-    ]
-  },
+  "homepage": "https://github.com/bitmap/doodl#readme",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.10.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
-    "webpack": "^4.4.1",
-    "webpack-cli": "^2.0.13",
-    "webpack-dev-server": "^3.1.1"
-  }
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@cabe/eslint-config": "^1.0.4",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.2.2",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {}
 }

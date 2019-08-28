@@ -1,4 +1,4 @@
-import Canvas from './src/components/canvas';
+import Canvas from './src/components/canvas'
 
-const Dudel = new Canvas('doodleCanvas');
-Dudel.initializeCanvas();
+const doodl = new Canvas('doodleCanvas')
+doodl.initializeCanvas()

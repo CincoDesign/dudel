@@ -1,4 +1,4 @@
-# dudel
+# doodl
 HTML5 touchscreen/force-touch/gamepad API drawing demo tool.
 
 ```

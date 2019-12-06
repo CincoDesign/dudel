@@ -1,346 +1,371 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
-  <head>
-    <meta charset="utf-8">
-    <title>doodl</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <style>
-      * {
-        box-sizing: border-box;
-        user-select: none;
-      }
+<head>
+  <meta charset="utf-8">
+  <title>doodl</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <style>
+    *, *::after, *::before {
+      box-sizing: border-box;
+      user-select: none !important;
+    }
 
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        background-color: #000;
-        background-position: center;
-        color: white;
-        font-family: monospace;
-        user-select: none;
-        font-size: 15px;
-        user-select: none;
-        position: fixed;
-        -webkit-overflow-scroll: auto;
-      }
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+      background-position: center;
+      color: white;
+      font-family: monospace;
+      user-select: none;
+      font-size: 15px;
+      user-select: none;
+      position: fixed;
+      -webkit-overflow-scroll: auto;
+    }
 
-      .bliss {
-        background-image: url("./bliss.jpg");
-        background-size: cover;
-      }
+    .bliss {
+      background-image: url("./bliss.jpg");
+      background-size: cover;
+    }
 
-      #controls {
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 0.5rem;
-        width: 100%;
-        z-index: 100;
-      }
+    #controls {
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0.5rem;
+      width: 100%;
+      z-index: 100;
+    }
 
-      button {
-        font-size: 13px;
-        outline: 0;
-        cursor: pointer;
-        background: transparent;
-        border: 2px solid white;
-        color: white;
-        border-radius: 5px;
-        padding: 0.5em 1em;
-        line-height: 1;
-      }
+    button {
+      font-size: 13px;
+      outline: 0;
+      cursor: pointer;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      border-radius: 5px;
+      padding: 0.5em 1em;
+      line-height: 1;
+    }
 
-      button.active,
-      button:active {
-        background: white;
-        color: black;
-      }
+    button.active,
+    button:active {
+      background: white;
+      color: black;
+    }
 
-      button[disabled] {
-        opacity: 0.2;
-      }
+    button[disabled] {
+      opacity: 0.2;
+    }
 
-      a {
-        color: white;
-        text-decoration: underline;
-      }
+    a {
+      color: white;
+      text-decoration: underline;
+    }
 
-      .pad {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 20%;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 20px;
-        z-index: 100;
-        height: 100%;
-      }
+    .pad {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20%;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 20px;
+      z-index: 100;
+      height: 100%;
+    }
 
-      #doodleCanvas {
-        position: absolute;
-        user-select: none;
-        display: block;
-        overflow: hidden;
-        background: transparent;
-        /* z-index: 10000; */
-        top: 0; left: 0;
-      }
+    #doodleCanvas {
+      position: absolute;
+      user-select: none;
+      display: block;
+      overflow: hidden;
+      background: transparent;
+      /* z-index: 10000; */
+      top: 0;
+      left: 0;
+    }
 
-      video, #basicallySnapchat {
-        /* width: 100%;
+    video,
+    #basicallySnapchat {
+      /* width: 100%;
         object-fit: cover; */
-      }
+    }
 
-      video, #basicallySnapchat, #gifCanvas {
-        position: absolute;
-        user-select: none;
-        pointer-events: none;
-        background: transparent;
-        /* z-index: -1; */
-        top: 0; left: 0;
-      }
+    video,
+    #basicallySnapchat,
+    #gifCanvas {
+      position: absolute;
+      user-select: none;
+      pointer-events: none;
+      background: transparent;
+      /* z-index: -1; */
+      top: 0;
+      left: 0;
+    }
 
-      #basicallySnapchat {
-        /* width: 100%;
+    #basicallySnapchat {
+      /* width: 100%;
         height: 100%; */
-      }
+    }
 
-      /* canvas {
+    /* canvas {
         mix-blend-mode: screen;
       } */
 
-      .byline {
-        position: fixed;
-        bottom: 0.5rem;
-        right: 1rem;
+    .byline {
+      position: fixed;
+      bottom: 0.5rem;
+      right: 1rem;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: transparent;
+      border: 2px solid white;
+      padding: 0;
+      margin: 0;
+      width: 300px;
+      height: 40px;
+      border-radius: 5px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 40px;
+      border-radius: 0;
+      background: #fff;
+      cursor: pointer;
+      border: 0;
+      display: block;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      -moz-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 0;
+      background: #fff;
+      cursor: pointer;
+      border: 0;
+    }
+
+    input[type=color] {
+      border: 0;
+      height: 40px;
+      position: absolute;
+      top: 8px;
+      right: 1rem;
+    }
+
+    label {
+      display: inline-block;
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+
+    label div {
+      margin-top: 0;
+    }
+
+    #snapBlock {
+      position: fixed;
+      left: 50%;
+      bottom: 10%;
+      text-align: center;
+      transform: translateX(-50%);
+      width: 100%;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0);
       }
 
-      input[type=range] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background: transparent;
-        border: 2px solid white;
-        padding: 0;
-        margin: 0;
-        width: 300px;
-        height: 40px;
-        border-radius: 5px;
+      66% {
+        transform: scale(1.2);
       }
 
-      input[type=range]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 40px;
-        border-radius: 0;
-        background: #fff;
-        cursor: pointer;
-        border: 0;
-        display: block;
+      100% {
+        transform: scale(1);
       }
+    }
 
-      input[type=range]::-moz-range-thumb {
-        -moz-appearance: none;
-        width: 12px;
-        height: 12px;
-        border-radius: 0;
-        background: #fff;
-        cursor: pointer;
-        border: 0;
-      }
+    #snapBtn {
+      border-radius: 50%;
+      width: 75px;
+      height: 75px;
+      line-height: 50px;
+      padding: 0;
+    }
 
-      label {
-        display: inline-block;
-        font-family: sans-serif;
-        font-size: 13px;
-      }
+    #snapBtn.active {
+      background: white;
+      animation: pop 250ms ease forwards;
+    }
 
-      label div {
-        margin-top: 0;
-      }
+    #snapOff {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
 
-      #snapBlock {
-        position: fixed;
-        left: 50%;
-        bottom: 10%;
-        text-align: center;
-        transform: translateX(-50%);
-      }
+    #gifBro {
+      width: 60px;
+      height: 40px;
+      border-radius: 5px;
+    }
 
-            @keyframes pop {
-        0% {
-          transform: scale(0);
-        }
-        66% {
-          transform: scale(1.2);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      #snapBtn {
-        border-radius: 50%;
-        width: 75px;
-        height: 75px;
-        line-height: 50px;
-        padding: 0;
-      }
-
-      #snapBtn.active {
-        background: white;
-        animation: pop 250ms ease forwards;
-      }
-
-      #snapOff {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-      }
-
-      #gifBro {
-        width: 60px;
-        height: 40px;
-        border-radius: 5px;
-      }
-
-      #gifBro.baked {
-        /* border-color: blue;
+    #gifBro.baked {
+      /* border-color: blue;
         background-image: linear-gradient(90deg, #00C0FF 0%, #FFCF00 49%, #FC4F4F 100%); */
-      }
+    }
 
-      .sizing {
-        position: fixed;
-        left: 0;
-        top: 50%;
-        width: 40px;
-        height: 40px;
-      }
+    .sizing {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      width: 40px;
+      height: 40px;
+    }
 
-      /* .sizing button {
+    /* .sizing button {
         display: block;
         margin-top: 5px;
         width: 40px;
       } */
 
-      #size {
-        text-align: center;
-        padding: 0.5em;
-        line-height: 1;
-        height: 0;
-        position: absolute;
-        top: -180px;
-        width: 40px;
+    #size {
+      text-align: center;
+      padding: 0.5em;
+      line-height: 1;
+      height: 0;
+      position: absolute;
+      top: -180px;
+      width: 40px;
+    }
+
+    #sizer {
+      transform: rotate(270deg) translateX(-50%) translateY(0%);
+      transform-origin: 0 0;
+    }
+
+
+    @keyframes eh {
+      from {
+        transform: translate(-50%, -50%) scale(0);
       }
 
-      #sizer {
-        transform: rotate(270deg) translateX(-50%) translateY(0%);
-        transform-origin: 0 0;
+      to {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes bfade {
+      from {
+        border-color: rgba(255, 255, 255, 1)
       }
 
+      to {
+        border-color: rgba(255, 255, 255, 0)
+      }
+    }
 
-      @keyframes eh {
-        from {
-          transform: translate(-50%, -50%) scale(0);
-        }
-        to {
-          transform: translate(-50%, -50%) scale(1);
-        }
-      }
-      @keyframes bfade {
-        from {
-          border-color: rgba(255,255,255,1)
-        }
-        to {
-          border-color: rgba(255,255,255,0)
-        }
-      }
-      @keyframes woo {
-        from {
-          /* opacity: 1; */
-          transform: scale(1);
-        }
-        to {
-          /* opacity: 0; */
-          transform: scale(0);
-        }
-      }
-      .woooooooo {
-        border-color: transparent;
-        background: red;
-        animation: woo 3s linear;
+    @keyframes woo {
+      from {
+        /* opacity: 1; */
+        transform: scale(1);
       }
 
-      .ehhhh {
-        position: relative;
-        mix-blend-mode: invert;
-        animation: bfade 1.5s ease;
+      to {
+        /* opacity: 0; */
+        transform: scale(0);
       }
-      .ehhhh::before {
-        animation: eh 1.5s ease;
-      }
+    }
 
-      .ehhhh::before {
-        content: '';
-        background: red;
-        border-radius: 50%;
-        width: 75px;
-        height: 75px;
-        position: absolute;
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: -1;
+    .woooooooo {
+      border-color: transparent;
+      background: red;
+      animation: woo 3s linear;
+    }
 
-      }
-    </style>
-  </head>
+    .ehhhh {
+      position: relative;
+      mix-blend-mode: invert;
+      animation: bfade 1.5s ease;
+    }
 
-  <body>
-    <div id="controls">
-      <button id="clear">Clear</button>
-      <button id="eraser">Eraser</button>
-      <button id="replay">Replay</button>
-      <button id="loop">Loop</button>
-      <button id="videoBtn">Video</button>
-      <button id="bliss">Bliss</button>
+    .ehhhh::before {
+      animation: eh 1.5s ease;
+    }
 
-      <div id="snapBlock" style="display:none">
-        <button id="gifBro" disabled>Gif!</button>
-        <button id="snapBtn">Snap!</button>
-        <button id="snapOff" disabled>&times;</button>
-      </div>
+    .ehhhh::before {
+      content: '';
+      background: red;
+      border-radius: 50%;
+      width: 75px;
+      height: 75px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1;
 
-      <div class="sizing">
-        <!-- <button id="sizeUp">+</button>
-        <button id="sizeDown">-</button> -->
-        <div id="size">50</div>
-        <input id="sizer" type="range" min="1" max="100" value="50" step="1">
-      </div>
+    }
+  </style>
+</head>
 
-      <div class="byline">doodl by
-        <a href="https://cabe.io" target="_blank">Cabe</a>
-      </div>
+<body>
+  <div id="controls">
+    <button id="clear">Clear</button>
+    <button id="eraser">Eraser</button>
+    <button id="replay">Replay</button>
+    <button id="loop">Loop</button>
+    <input id="color" type="color" />
+    <button id="videoBtn">Video</button>
+    <button id="bliss">Bliss</button>
+
+    <div id="snapBlock" style="display:none">
+      <button id="gifBro" disabled>Gif!</button>
+      <button id="snapBtn">Snap!</button>
+      <button id="snapOff" disabled>&times;</button>
     </div>
 
-    <video id="video"></video>
-    <canvas id="videoCanvas"></canvas>
-    <canvas id="basicallySnapchat"></canvas>
-    <canvas id="gifCanvas"></canvas>
-    <canvas id="doodleCanvas"></canvas>
+    <div class="sizing">
+      <!-- <button id="sizeUp">+</button>
+        <button id="sizeDown">-</button> -->
+      <!-- <div id="size">50</div> -->
+      <input id="sizer" type="range" min="1" max="100" value="50" step="1">
+    </div>
 
-    <script src="./dist/bundle.js"></script>
-    <script type="text/jscript">
+    <!-- <div class="byline">doodl by
+        <a href="https://cabe.io" target="_blank">Cabe</a>
+      </div> -->
+  </div>
+
+  <video id="video" muted autoplay playsinline></video>
+  <canvas id="videoCanvas"></canvas>
+  <canvas id="basicallySnapchat"></canvas>
+  <canvas id="gifCanvas"></canvas>
+  <canvas id="doodleCanvas"></canvas>
+
+  <script src="./dist/bundle.js"></script>
+  <script type="text/jscript">
       const body = document.body
-      body.addEventListener('touchmove', e => e.preventDefault(), false);
-      body.addEventListener('contextmenu', e => e.preventDefault(), false);
     </script>
-  </body>
+</body>
+
 </html>

@@ -17,16 +17,15 @@ class Controls {
     this.videoScrn = document.getElementById('video')
 
     this.sizer = document.getElementById('sizer')
+    this.color = document.getElementById('color')
 
     this.snapChat = document.getElementById('basicallySnapchat')
     this.snapChatBtn = document.getElementById('snapBtn')
     this.snapBlock = document.getElementById('snapBlock')
     this.snapOffBtn = document.getElementById('snapOff')
 
-
     this.gifBro = document.getElementById('gifBro')
     this.gifCanvas = document.getElementById('gifCanvas')
-
 
     this.eraserBtn.addEventListener('click', () => this.eraser())
     this.clearBtn.addEventListener('click', () => this.clear())
@@ -38,7 +37,9 @@ class Controls {
     this.snapOffBtn.addEventListener('click', () => this.snapOff())
 
     this.gifBro.addEventListener('click', () => this.gifToggle())
+
     this.sizer.addEventListener('change', event => this.sizeSlider(event))
+    this.color.addEventListener('change', event => this.updateBrush(event))
 
     this.eraser = this.eraser.bind(this)
     this.clear = this.clear.bind(this)
@@ -55,6 +56,19 @@ class Controls {
 
     this.gogogo = null
     this.gifArray = []
+
+    // PP Demo Tweaks
+    this.blissBtn.style.visibility = 'hidden'
+    this.sizer.style.visibility = 'hidden'
+    this.videoBtn.style.visibility = 'hidden'
+    this.gifBro.style.visibility = 'hidden'
+    this.snapBlock.visibility = 'hidden'
+
+    this.video()
+  }
+
+  updateBrush(event) {
+    this.brush.settings.color = event.target.value
   }
 
   video() {
@@ -112,6 +126,7 @@ class Controls {
     }
     const renderSize = calculateSize(videoSize, canvasSize)
     const xOffset = (canvasSize.width - renderSize.width) / 2
+    const yOffset = (canvasSize.height - renderSize.height) / 2
 
     let len = this.gifArray.length
     let timer = 30
@@ -119,12 +134,12 @@ class Controls {
 
     function snapIt() {
       canvas.style = 'display: block'
-      canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height)
+      canvas.getContext('2d').drawImage(video, xOffset, yOffset, renderSize.width, renderSize.height)
     }
 
     function gifIt() {
-      canvas.getContext('2d').drawImage(video, xOffset, 0, renderSize.width, renderSize.height)
-      const frame = canvas.getContext('2d').getImageData(xOffset, 0, renderSize.width, renderSize.height)
+      canvas.getContext('2d').drawImage(video, xOffset, yOffset, renderSize.width, renderSize.height)
+      const frame = canvas.getContext('2d').getImageData(xOffset, yOffset, renderSize.width, renderSize.height)
       that.gifArray.push(frame)
     }
 
@@ -134,12 +149,12 @@ class Controls {
         len = 0
       } else len += 1
 
-      that.gifCanvas.getContext('2d').putImageData(that.gifArray[len], xOffset, 0)
+      that.gifCanvas.getContext('2d').putImageData(that.gifArray[len], xOffset, yOffset)
     }
 
     function stopCountdown() {
       clearInterval(downdown)
-      that.gogogo = setInterval(loopsBoi, 100)
+      that.gogogo = setInterval(loopsBoi, 60)
     }
 
     function countingDown() {
@@ -159,22 +174,22 @@ class Controls {
       }
     }
 
-    function somebodyClickedTheSnapButon() {
-      that.snapChatBtn.classList.add('ehhhh')
-      that.snapChatBtn.innerHTML = 'Ready?'
+    const somebodyClickedTheSnapButon = () => {
+      this.snapChatBtn.classList.add('ehhhh')
+      this.snapChatBtn.innerHTML = 'Ready?'
 
-      that.snapChatBtn.classList.remove('active')
-      that.gifBro.disabled = true
-      that.snapOffBtn.disabled = true
-      that.gifBro.classList.remove('active')
+      this.snapChatBtn.classList.remove('active')
+      this.gifBro.disabled = true
+      this.snapOffBtn.disabled = true
+      this.gifBro.classList.remove('active')
 
-      that.gifCanvas.style = 'display: none'
-      that.gifArray = []
-      clearInterval(that.gogogo)
+      this.gifCanvas.style = 'display: none'
+      this.gifArray = []
+      clearInterval(this.gogogo)
       setTimeout(() => {
         downdown = setInterval(countingDown, 100)
-        that.snapChatBtn.classList.add('woooooooo')
-        that.snapChatBtn.classList.remove('ehhhh')
+        this.snapChatBtn.classList.add('woooooooo')
+        this.snapChatBtn.classList.remove('ehhhh')
       }, 1500)
     }
 
@@ -183,6 +198,8 @@ class Controls {
       this.snapOff()
       somebodyClickedTheSnapButon()
     }
+
+    this.gifToggle()
   }
 
   snapOff() {

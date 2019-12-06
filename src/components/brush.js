@@ -1,12 +1,8 @@
-import buttonList from './controller'
-
 const initialState = {
   x: -100,
   y: -100,
   lx: -100,
   ly: -100,
-  prevX: -100,
-  prevY: -100,
   frame: 0,
   stall: 0,
   r: 2,
@@ -15,8 +11,8 @@ const initialState = {
   speed: 5,
   height: 5,
   width: 127,
-  size: 50,
-  color: 0,
+  size: 16,
+  color: '#000000',
   eraser: false,
   replay: false,
   loop: false,
@@ -37,26 +33,8 @@ class Brush {
 
     this.history = [this.initialHistory]
 
-    this.controller = {
-      type: null,
-      A: false,
-      B: false,
-      X: false,
-      Y: false,
-      RT: false,
-      LT: false,
-      RB: false,
-      LB: false,
-      UP: false,
-      DOWN: false,
-      LEFT: false,
-      RIGHT: false,
-      AXIS_X: 0,
-      AXIS_Y: 1,
-    }
-
     this.draw = this.draw.bind(this)
-    this.controllerPosition = this.controllerPosition.bind(this)
+    // this.controllerPosition = this.controllerPosition.bind(this)
     this.canvas = canvas
     this.context = context
   }
@@ -73,35 +51,45 @@ class Brush {
     return `rgb(${Math.round(red)},${Math.round(green)},${Math.round(blue)})`
   }
 
-  line(lx, ly, x, y, size, color) {
+  line(x, y, size, color) {
     const { context } = this
     context.beginPath()
-    context.moveTo(lx, ly)
+    context.moveTo(this.settings.lx, this.settings.ly)
     context.lineTo(x, y)
     context.lineWidth = size
     context.lineCap = 'round'
     context.lineJoin = 'round'
     context.strokeStyle = color
     context.stroke()
+    context.closePath()
+
+    this.settings.lx = x
+    this.settings.ly = y
   }
 
   record(data) {
     this.history.push(data)
   }
 
-  draw(xbox) {
+  draw() {
     const {
       lx, ly, x, y, size, eraser, frame, replay,
     } = this.settings
 
-    let color = this.colorPhase(this.settings.color / 30)
+    // let color = this.colorPhase(this.settings.color / 30)
+    let { color } = this.settings
+
+    if (frame === 0) {
+      color = null
+    }
 
     if (eraser) {
       color = 'rgb(0,0,0)'
     }
 
-    this.line(lx, ly, x, y, size, color)
-    this.controllerPosition(xbox)
+    console.log(lx, ly, x, y)
+
+    this.line(x, y, size, color)
 
     const data = {
       from: [lx, ly],
@@ -165,72 +153,6 @@ class Brush {
     this.settings.replay = false
     this.settings.loop = false
     this.settings.clean = true
-  }
-
-  controllerPosition(xbox) {
-    const CTRL = this.controller
-    const BRUSH = this.settings
-
-    function update() {
-      BRUSH.xbox = true
-      BRUSH.color += 1
-      BRUSH.frame += 1
-    }
-
-    if (xbox && !BRUSH.clean) {
-      if (
-        xbox.axes[CTRL.AXIS_Y] < 0
-        || xbox.axes[CTRL.AXIS_Y] > 0
-        || xbox.axes[CTRL.AXIS_X] > 0
-        || xbox.axes[CTRL.AXIS_X] < 0) {
-        update()
-      }
-
-      if (xbox.axes[CTRL.AXIS_Y] === 0 && xbox.axes[CTRL.AXIS_X] === 0 && BRUSH.xbox) {
-        BRUSH.frame = 0
-        BRUSH.xbox = false
-      }
-
-      for (let i = 0; i < xbox.buttons.length; i += 1) {
-        if (xbox.buttons[i].pressed) CTRL[buttonList[i]] = true
-        else CTRL[buttonList[i]] = false
-      }
-
-      BRUSH.y += xbox.axes[CTRL.AXIS_Y] * CTRL.speed
-      BRUSH.x += xbox.axes[CTRL.AXIS_X] * CTRL.speed
-
-      if (!CTRL.B) {
-        BRUSH.ly = BRUSH.prevY
-        BRUSH.lx = BRUSH.prevX
-      }
-
-      BRUSH.prevY += xbox.axes[CTRL.AXIS_Y] * CTRL.speed
-      BRUSH.prevX += xbox.axes[CTRL.AXIS_X] * CTRL.speed
-
-      if (CTRL.LB) {
-        BRUSH.speed = 2.5
-      } else if (CTRL.RB) {
-        BRUSH.speed = 10
-      } else {
-        BRUSH.speed = 5
-      }
-      if (CTRL.Y) {
-        BRUSH.r = 1
-        BRUSH.g = 0
-        BRUSH.b = 5
-      } else {
-        BRUSH.r = 2
-        BRUSH.g = 0
-        BRUSH.b = 4
-      }
-
-      if (BRUSH.size >= 20) {
-        if (CTRL.RT) BRUSH.size += 1
-        if (CTRL.LT) BRUSH.size -= 1
-      } else {
-        BRUSH.size = 20
-      }
-    }
   }
 }
 

@@ -40,39 +40,37 @@ class Canvas {
 
       if (evt.type === 'touchmove' || evt.type === 'touchstart') {
         const touches = evt.targetTouches
-        x = touches[0].pageX
-        y = touches[0].pageY
+
+        x = touches[0].clientX
+        y = touches[0].clientY
         // settings.size = touches[0].force * 100;
       }
 
+
       if (settings.frame === 0) {
-        settings.prevX = x
-        settings.prevY = y
+        settings.lx = x
+        settings.ly = y
       }
+
 
       settings.x = x
       settings.y = y
-      settings.lx = settings.prevX
-      settings.ly = settings.prevY
-      settings.color += 1
-      settings.frame += 1
 
-      // store
-      settings.prevX = x
-      settings.prevY = y
+      // settings.color += 1
+      settings.frame += 1
     }
 
     // Attach the events to the DOM
     function initializeMouse(evt) {
       settings.frame = 0
       doodle(evt)
-      canvas.addEventListener('mousemove', doodle, false)
+      canvas.addEventListener('mousemove', doodle)
     }
 
     function initializeTouch(evt) {
       settings.frame = 0
       doodle(evt)
-      canvas.addEventListener('touchmove', doodle, false)
+      canvas.addEventListener('touchmove', doodle)
     }
 
     window.addEventListener('resize', this.resizeCanvas, false)
@@ -82,7 +80,7 @@ class Canvas {
       () => {
         settings.frame = 0
 
-        canvas.removeEventListener('mousemove', doodle, false)
+        canvas.removeEventListener('mousemove', doodle)
       },
       false
     )
@@ -92,7 +90,7 @@ class Canvas {
       () => {
         settings.frame = 0
 
-        canvas.removeEventListener('touchmove', doodle, false)
+        canvas.removeEventListener('touchmove', doodle)
       },
       false
     )

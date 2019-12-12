@@ -1,7 +1,8 @@
-/* globals window, document, navigator */
+/* globals window, document */
 
 import Brush from './brush'
 import Controls from './controls'
+import { Sticker, stamp } from './sticker'
 
 class Canvas {
   constructor(canvas) {
@@ -22,9 +23,24 @@ class Canvas {
     context.drawImage(canvas, 0, 0)
   }
 
-  initializeCanvas() {
+  async initializeCanvas() {
     const { canvas, brush } = this
     const { settings } = brush
+
+    this.sticker = await Sticker.load('hbd.gif')
+
+    // const s = stamp(this.sticker, this.context)
+
+    const req = new XMLHttpRequest()
+    req.open('GET', '/hbd.gif')
+    req.responseType = 'arraybuffer'
+
+    req.onload = () => {
+      const arraybuffer = req.response
+      console.log(arraybuffer)
+    }
+
+    req.send()
 
     // resize the canvas to fill browser window dynamically
     this.resizeCanvas()
@@ -98,18 +114,16 @@ class Canvas {
     canvas.addEventListener('touchstart', initializeTouch, false)
     canvas.addEventListener('mousedown', initializeMouse, false)
 
-    const gamePads = navigator.getGamepads()
-    let xbox = gamePads[0]
-
     function renderLoop() {
-      // controller is broken
-      xbox = null
 
       if (settings.replay) {
         brush.replay()
       } else {
-        brush.draw(xbox)
+        brush.draw()
       }
+
+      // s.draw()
+
 
       window.requestAnimationFrame(renderLoop)
     }

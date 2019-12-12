@@ -12,7 +12,7 @@ const initialState = {
   height: 5,
   width: 127,
   size: 16,
-  color: '#000000',
+  color: '#0033CC',
   eraser: false,
   replay: false,
   loop: false,
@@ -87,8 +87,6 @@ class Brush {
       color = 'rgb(0,0,0)'
     }
 
-    console.log(lx, ly, x, y)
-
     this.line(x, y, size, color)
 
     const data = {
@@ -148,7 +146,7 @@ class Brush {
     this.settings.speed = 5
     this.settings.height = 5
     this.settings.width = 127
-    // this.settings.size = 50;
+    this.settings.size = 16
     this.settings.eraser = false
     this.settings.replay = false
     this.settings.loop = false

@@ -53,9 +53,11 @@
       background: transparent;
       border: 2px solid white;
       color: white;
-      border-radius: 5px;
-      padding: 0.5em 1em;
-      line-height: 1;
+      padding: 0;
+      line-height: 25px;
+      height: 50px;
+      width: 50px;
+      border-radius: 50px;
     }
 
     button.active,
@@ -137,7 +139,7 @@
       padding: 0;
       margin: 0;
       width: 300px;
-      height: 40px;
+      height: 80px;
       border-radius: 5px;
     }
 
@@ -145,7 +147,7 @@
       -webkit-appearance: none;
       appearance: none;
       width: 20px;
-      height: 40px;
+      height: 80px;
       border-radius: 0;
       background: #fff;
       cursor: pointer;
@@ -165,10 +167,30 @@
 
     input[type=color] {
       border: 0;
-      height: 40px;
+      width: 90px;
+      height: 90px;
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      cursor: pointer;
+    }
+
+    #fakie {
+      outline: 0;
+      cursor: pointer;
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 0;
+      line-height: 25px;
+      height: 50px;
+      width: 50px;
+      border-radius: 50px;
+      position: relative;
+      overflow: hidden;
       position: absolute;
       top: 8px;
-      right: 1rem;
+      right: 8px;
     }
 
     label {
@@ -184,7 +206,7 @@
     #snapBlock {
       position: fixed;
       left: 50%;
-      bottom: 10%;
+      bottom: 2%;
       text-align: center;
       transform: translateX(-50%);
       width: 100%;
@@ -210,6 +232,7 @@
       height: 75px;
       line-height: 50px;
       padding: 0;
+      position: relative;
     }
 
     #snapBtn.active {
@@ -221,6 +244,10 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
+      position: absolute;
+      line-height: 1;
+      bottom: 0;
+      margin-left: 0.5rem;
     }
 
     #gifBro {
@@ -263,9 +290,9 @@
       transform-origin: 0 0;
     }
 
-
     @keyframes eh {
       from {
+        background: white;
         transform: translate(-50%, -50%) scale(0);
       }
 
@@ -297,12 +324,28 @@
     }
 
     .woooooooo {
+      pointer-events: none;
+    }
+
+    .woooooooo::before {
+      content: '';
       border-color: transparent;
       background: red;
-      animation: woo 3s linear;
+      content: '';
+      background: red;
+      border-radius: 50%;
+      width: 75px;
+      height: 75px;
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      animation: woo 5s linear;
     }
 
     .ehhhh {
+      pointer-events: none;
       position: relative;
       mix-blend-mode: invert;
       animation: bfade 1.5s ease;
@@ -325,21 +368,31 @@
       z-index: -1;
 
     }
+
+    .hbd {
+      position: absolute;
+      top: 60%;
+      left: 10%;
+      width: 120px;
+      transform: rotate(-20deg);
+    }
   </style>
 </head>
 
 <body>
   <div id="controls">
     <button id="clear">Clear</button>
-    <button id="eraser">Eraser</button>
-    <button id="replay">Replay</button>
-    <button id="loop">Loop</button>
-    <input id="color" type="color" />
-    <button id="videoBtn">Video</button>
-    <button id="bliss">Bliss</button>
+    <button id="eraser" hidden>Eraser</button>
+    <button id="replay" hidden>Replay</button>
+    <button id="loop" hidden>Loop</button>
+    <div id="fakie">
+      <input id="color" type="color" value="#0033CC" />
+    </div>
+    <button id="videoBtn" hidden>Video</button>
+    <button id="bliss" hidden>Bliss</button>
 
     <div id="snapBlock" style="display:none">
-      <button id="gifBro" disabled>Gif!</button>
+      <button id="gifBro" disabled hidden>Gif!</button>
       <button id="snapBtn">Snap!</button>
       <button id="snapOff" disabled>&times;</button>
     </div>
@@ -348,7 +401,7 @@
       <!-- <button id="sizeUp">+</button>
         <button id="sizeDown">-</button> -->
       <!-- <div id="size">50</div> -->
-      <input id="sizer" type="range" min="1" max="100" value="50" step="1">
+      <input id="sizer" type="range" min="1" max="100" value="50" step="1" hidden>
     </div>
 
     <!-- <div class="byline">doodl by
@@ -358,9 +411,11 @@
 
   <video id="video" muted autoplay playsinline></video>
   <canvas id="videoCanvas"></canvas>
-  <canvas id="basicallySnapchat"></canvas>
+  <canvas id="basicallySnapchat" hidden></canvas>
   <canvas id="gifCanvas"></canvas>
   <canvas id="doodleCanvas"></canvas>
+
+  <!-- <img src="/hbd.gif" class="hbd"/> -->
 
   <script src="./dist/bundle.js"></script>
   <script type="text/jscript">

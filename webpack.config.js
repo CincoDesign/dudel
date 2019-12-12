@@ -17,4 +17,4 @@ module.exports = {
     extensions: ['*', '.js', '.jsx'],
   },
   plugins: [],
-};
+}

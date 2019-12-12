@@ -63,6 +63,9 @@ class Controls {
     this.videoBtn.style.visibility = 'hidden'
     this.gifBro.style.visibility = 'hidden'
     this.snapBlock.visibility = 'hidden'
+    this.loopBtn.visibility = 'hidden'
+    this.eraserBtn.visibility = 'hidden'
+    this.replayBtn.visibility = 'hidden'
 
     this.video()
   }
@@ -129,7 +132,7 @@ class Controls {
     const yOffset = (canvasSize.height - renderSize.height) / 2
 
     let len = this.gifArray.length
-    let timer = 30
+    let timer = 50
     let downdown
 
     function snapIt() {
@@ -159,7 +162,9 @@ class Controls {
 
     function countingDown() {
       timer -= 1
-      that.snapChatBtn.innerHTML = timer
+
+      const time = timer % 50
+      that.snapChatBtn.innerHTML = time
       gifIt()
 
       if (timer === 0) {
@@ -171,6 +176,7 @@ class Controls {
         that.gifBro.disabled = false
         that.snapOffBtn.disabled = false
         that.gifBro.classList.add('baked')
+        this.gifCanvas.style = 'display: block'
       }
     }
 
@@ -183,9 +189,12 @@ class Controls {
       this.snapOffBtn.disabled = true
       this.gifBro.classList.remove('active')
 
+
       this.gifCanvas.style = 'display: none'
+
       this.gifArray = []
       clearInterval(this.gogogo)
+
       setTimeout(() => {
         downdown = setInterval(countingDown, 100)
         this.snapChatBtn.classList.add('woooooooo')
@@ -199,7 +208,6 @@ class Controls {
       somebodyClickedTheSnapButon()
     }
 
-    this.gifToggle()
   }
 
   snapOff() {
@@ -209,15 +217,7 @@ class Controls {
     this.gifBro.classList.remove('active')
   }
 
-  gifToggle() {
-    if (this.gifBro.classList.contains('active')) {
-      this.gifCanvas.style = 'display: none'
-      this.gifBro.classList.remove('active')
-    } else {
-      this.gifCanvas.style = 'display: block'
-      this.gifBro.classList.add('active')
-    }
-  }
+  gifToggle() {}
 
   clear() {
     const {
